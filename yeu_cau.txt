@@ -1,0 +1,21 @@
+Ưu tiên nhìn xa, hay nhìn rõ vật?:  test trước với thông số ửo dưới rồi đưa ra quyết định sau
+
+Có yêu cầu theo dõi vật không?: 
+
+- Khoảng cách:
+    - tối đa: 80m
+    - gần nhất: <1m
+    - phân biệt hai vật bao xa: (độ phân giải: 2 độ)
+
+- Vận tốc:
+    - tốc độ tối đa: 30m/s
+    - Cần biết hướng chuyển động?: có
+    - phân biệt vận tốc hai vật chạy sát nhau không?: 
+
+- Đối tượng mục tiêu:
+    - Cần bắt đối tượng nhỏ hay lớn?: dây điện cỡ 36mm
+    
+
+- Tốc độ phản hồi:
+    - 1 giây cho ra bao nhiêu khung hình: 30hz
+

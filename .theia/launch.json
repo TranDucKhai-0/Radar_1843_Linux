@@ -1,0 +1,16 @@
+{
+  // Use IntelliSense to learn about possible attributes.
+  // Hover to view descriptions of existing attributes.
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Out Of Box 1843 MSS",
+      "type": "ccs-debug",
+      "request": "launch",
+      "projectInfo": {
+        "name": "Out Of Box 1843 MSS",
+        "resourceId": "/Out Of Box 1843 MSS"
+      }
+    }
+  ]
+}

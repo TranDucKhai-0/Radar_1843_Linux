@@ -1,0 +1,9 @@
+gmake: /home/khai/workspace_ccstheia/Out: No such file or directory
+gmake: *** No rule to make target `/home/khai/workspace_ccstheia/Out'.  Stop.
+error: xdc.cfg.SourceDir: "/home/khai/ti/xdctools_3_50_08_24_core/packages/xdc/cfg/SourceDir.xs", line 209: xdc.cfg.SourceDir : Build of generated source libraries failed: exit status = 2:
+
+js: "/home/khai/ti/xdctools_3_50_08_24_core/packages/xdc/cfg/Main.xs", line 160: Error: Configuration failed!
+gmake: *** [package/cfg/mmw_mss_per4ft.xdl] Error 1
+gmake: *** Deleting file `package/cfg/mmw_mss_per4ft.xdl'
+gmake: *** [package/cfg/mmw_mss_per4ft.xdl] Deleting file `package/cfg/mmw_mss_per4ft.h'
+gmake: *** [package/cfg/mmw_mss_per4ft.xdl] Deleting file `package/cfg/mmw_mss_per4ft.c'

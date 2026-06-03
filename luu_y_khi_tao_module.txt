@@ -1,0 +1,7 @@
+tạo module mới thì nhớ khai báo trong file thì properties/C6000 Compiler/Include Options
+
+trỏ tới file chứa .h, và đổi chỉ dãn dự án này ${PROJECT_ROOT}/
+
+VD: ${PROJECT_ROOT}/module/<tên module>/include
+
+có thể tham khảo file dbscan của anh
