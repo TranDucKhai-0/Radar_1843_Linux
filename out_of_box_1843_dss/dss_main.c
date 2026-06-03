@@ -464,8 +464,6 @@ static int32_t MmwDemo_copyResultToHSRAM
     ptrCurrBuffer = &ptrHsramBuffer->payload[0];
     totalHsramSize = MMWDEMO_HSRAM_PAYLOAD_SIZE;
 
-    /* Save ObjOut in HSRAM */
-    if(result->objOut != NULL)
     /* Xóa hoàn toàn ObjOut và SideInfo (cắt bỏ dữ liệu OOB Point Cloud) */
     result->objOutSideInfo = NULL;
     
@@ -476,12 +474,9 @@ static int32_t MmwDemo_copyResultToHSRAM
 
     if(numTargets > 0)
     {
-        itemPayloadLen = sizeof(DPIF_PointCloudCartesian) * result->numObjOut;
         itemPayloadLen = sizeof(GTRACK_targetDesc) * numTargets;
         if((totalHsramSize- itemPayloadLen) > 0)
         {
-            memcpy(ptrCurrBuffer, (void *)result->objOut, itemPayloadLen);
-
             memcpy(ptrCurrBuffer, (void *)targetDescs, itemPayloadLen);
             
             /* HACK: "Mượn" con trỏ objOut và thuộc tính numObjOut để gửi Target.
@@ -497,23 +492,8 @@ static int32_t MmwDemo_copyResultToHSRAM
             return -1;
         }
     }
-
-    /* Save ObjOutSideInfo in HSRAM */
-    if(result->objOutSideInfo != NULL)
     else
     {
-        itemPayloadLen = sizeof(DPIF_PointCloudSideInfo) * result->numObjOut;
-        if((totalHsramSize- itemPayloadLen) > 0)
-        {
-            memcpy(ptrCurrBuffer, (void *)result->objOutSideInfo, itemPayloadLen);
-            ptrHsramBuffer->result.objOutSideInfo = (DPIF_PointCloudSideInfo *)ptrCurrBuffer;
-            ptrCurrBuffer+= itemPayloadLen;
-            totalHsramSize -=itemPayloadLen;
-        }
-        else
-        {
-            return -1;
-        }
         ptrHsramBuffer->result.objOut = NULL;
         ptrHsramBuffer->result.numObjOut = 0;
     }
@@ -602,16 +582,6 @@ static void MmwDemo_DPC_ObjectDetection_dpmTask(UArg arg0, UArg arg1)
                 /* Copy result data to HSRAM */
                 if ((retVal = MmwDemo_copyResultToHSRAM(&gHSRAM, result, &gMmwDssMCB.dataPathObj.subFrameStats[result->subFrameIdx])) >= 0)
                 {
-                    /* ====== GTRACK MODULE: XUẤT DỮ LIỆU ====== */
-                    if (result->objOut != NULL && result->numObjOut > 0)
-                    {
-                        SendPointCloudToGtrack(result->objOut, result->numObjOut);
-                        
-                        // Lấy kết quả GTRACK sau khi xử lý xong
-                        // (Lưu ý: Để đồng bộ chặt chẽ, bạn nên dùng 1 Event/Semaphore 
-                        // để chờ Task GTRACK làm xong rồi mới lấy kết quả)
-                    }
-
                     /* Update interframe margin with HSRAM copy time */
                     gHSRAM.outStats.interFrameProcessingMargin -= ((Cycleprofiler_getTimeStamp() - startTime)/DSP_CLOCK_MHZ);
 

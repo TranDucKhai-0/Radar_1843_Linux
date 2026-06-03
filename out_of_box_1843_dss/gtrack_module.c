@@ -18,6 +18,10 @@ static void* g_pGtrackHandle = NULL;
 static DPIF_PointCloudCartesian g_pointCloudBuffer[MAX_DETECTED_POINTS];
 static uint32_t g_numDetectedPoints = 0;
 
+static GTRACK_targetDesc g_targetDescs[MAX_TRACKING_TARGETS];
+static uint32_t g_numTargets = 0;
+Semaphore_Handle g_gtrackDoneSemHandle;
+
 /* Lưu vận tốc của chính radar (Ego-Velocity) nhận từ MSS (m/s) */
 // Lưu ý: Đây là vận tốc của radar theo hướng xuyên tâm, phải được MSS xử lý chuyển sang dạng trục y tiên, x phải, z lên
 static float g_egoVelocity = 0.0f;
@@ -32,6 +36,16 @@ static bool IsGtrackInitialized(void)
 void UpdateEgoVelocity(float currentVelocity)
 {
     g_egoVelocity = currentVelocity;
+}
+
+/* DSS Main gọi hàm này để lấy kết quả đóng gói gửi MSS */
+void GetGtrackTargetList(GTRACK_targetDesc *targetList, uint32_t *numTargets)
+{
+    if (targetList != NULL && numTargets != NULL)
+    {
+        memcpy(targetList, g_targetDescs, g_numTargets * sizeof(GTRACK_targetDesc));
+        *numTargets = g_numTargets;
+    }
 }
 
 /**
@@ -50,7 +64,8 @@ static void _ProcessGtrackTask(UArg arg0, UArg arg1)
         /* Đợi cờ báo hiệu có dữ liệu Point Cloud mới từ OOB */
         Semaphore_pend(g_gtrackSemHandle, BIOS_WAIT_FOREVER);
 
-        if (IsGtrackInitialized() && (g_numDetectedPoints > 0))
+        /* Luôn chạy GTRACK kể cả khi không có Point Cloud (để duy trì thuật toán theo dõi/dự đoán) */
+        if (IsGtrackInitialized())
         {
             /* Chuyển đổi OOB Point Cloud Cartesian -> GTRACK Spherical */
             for (uint32_t i = 0; i < g_numDetectedPoints; i++)
@@ -83,9 +98,12 @@ static void _ProcessGtrackTask(UArg arg0, UArg arg1)
             gtrack_step(g_pGtrackHandle, measurementPoints, NULL, g_numDetectedPoints, 
                         targetDescs, &numTargets, mIndex, benchmarks);
 
-            /* 
-             * TẠI ĐÂY: Lưu targetDescs vào HSRAM hoặc đẩy sang MSS 
-             */
+            /* Lưu kết quả vào biến cục bộ để DPM Task lấy */
+            memcpy(g_targetDescs, targetDescs, numTargets * sizeof(GTRACK_targetDesc));
+            g_numTargets = numTargets;
+
+            /* Báo hiệu cho luồng DSS DPM là đã xử lý xong */
+            Semaphore_post(g_gtrackDoneSemHandle);
         }
     }
 }
@@ -114,6 +132,8 @@ void InitGtrackModule(void)
     Semaphore_Params_init(&semParams);
     semParams.mode = Semaphore_Mode_BINARY;
     g_gtrackSemHandle = Semaphore_create(0, &semParams, NULL);
+
+    g_gtrackDoneSemHandle = Semaphore_create(0, &semParams, NULL);
 }
 
 void CreateGtrackTask(void)
@@ -135,9 +155,14 @@ void SendPointCloudToGtrack(DPIF_PointCloudCartesian *pPointCloud, uint32_t numP
     g_numDetectedPoints = numPoints;
 
     /* Copy dữ liệu vào vùng nhớ tĩnh của module và kích hoạt semaphore */
-    if ((numPoints > 0) && (pPointCloud != NULL))
+    if (pPointCloud != NULL && numPoints > 0)
     {
         memcpy(g_pointCloudBuffer, pPointCloud, numPoints * sizeof(DPIF_PointCloudCartesian));
-        Semaphore_post(g_gtrackSemHandle);
     }
+    else
+    {
+        g_numDetectedPoints = 0;
+    }
+    
+    Semaphore_post(g_gtrackSemHandle);
 }
