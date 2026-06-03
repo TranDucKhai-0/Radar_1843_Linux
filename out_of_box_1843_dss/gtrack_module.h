@@ -9,6 +9,14 @@
 /* Khởi tạo module GTRACK và các Semaphore cần thiết */
 void InitGtrackModule(void);
 
+/* 
+ * Cập nhật vận tốc di chuyển của Radar (Ego-Velocity) 
+ * egoVelVec[0] = Vận tốc trục X (sang phải)
+ * egoVelVec[1] = Vận tốc trục Y (tiến tới)
+ * egoVelVec[2] = Vận tốc trục Z (hướng lên)
+ */
+void UpdateEgoVelocity(float *egoVelVec);
+
 /* Tạo Task độc lập để xử lý GTRACK trên DSP */
 void CreateGtrackTask(void);
 

@@ -22,9 +22,8 @@ static GTRACK_targetDesc g_targetDescs[MAX_TRACKING_TARGETS];
 static uint32_t g_numTargets = 0;
 Semaphore_Handle g_gtrackDoneSemHandle;
 
-/* Lưu vận tốc của chính radar (Ego-Velocity) nhận từ MSS (m/s) */
-// Lưu ý: Đây là vận tốc của radar theo hướng xuyên tâm, phải được MSS xử lý chuyển sang dạng trục y tiên, x phải, z lên
-static float g_egoVelocity = 0.0f;
+/* Lưu vector vận tốc 3D của chính radar (Ego-Velocity) nhận từ MSS qua hệ trục Radar (X phải, Y tiến, Z lên) */
+static float g_egoVelocityVec[3] = {0.0f, 0.0f, 0.0f};
 
 /* Hàm Boolean trả lời câu hỏi Đúng/Sai */
 static bool IsGtrackInitialized(void)
@@ -32,10 +31,15 @@ static bool IsGtrackInitialized(void)
     return (g_pGtrackHandle != NULL);
 }
 
-/* Hàm Public để cập nhật vận tốc từ MSS truyền xuống */
-void UpdateEgoVelocity(float currentVelocity)
+/* Hàm Public để cập nhật vận tốc từ luồng DPM IOCTL truyền xuống */
+void UpdateEgoVelocity(float *egoVelVec)
 {
-    g_egoVelocity = currentVelocity;
+    if (egoVelVec != NULL)
+    {
+        g_egoVelocityVec[0] = egoVelVec[0];
+        g_egoVelocityVec[1] = egoVelVec[1];
+        g_egoVelocityVec[2] = egoVelVec[2];
+    }
 }
 
 /* DSS Main gọi hàm này để lấy kết quả đóng gói gửi MSS */
@@ -86,10 +90,18 @@ static void _ProcessGtrackTask(UArg arg0, UArg arg1)
                 measurementPoints[i].elevation = sphericalVec[2];
                 measurementPoints[i].doppler = sphericalVec[3];
 
-                /* Lấy vận tốc xuyên tâm trực tiếp từ OOB, đè lên giá trị doppler tính toán nội bộ */
-                /* BÙ TRỪ VẬN TỐC (COMPENSATION): 
-                 * Doppler đo được = Doppler thực của vật - Vận tốc radar * cos(Azimuth) * cos(Elevation) */
-                float radialEgoVel = g_egoVelocity * cosf(sphericalVec[1]) * cosf(sphericalVec[2]);
+                /* BÙ TRỪ VẬN TỐC THEO VECTOR 3D (EGO-VELOCITY COMPENSATION) */
+                float radialEgoVel = 0.0f;
+                float range = sphericalVec[0];
+                
+                /* Tránh chia cho 0 khi vật ở quá gần tâm */
+                if (range > 0.01f)
+                {
+                    /* Phép chiếu Dot Product: (V_ego . P_target) / |P_target| */
+                    radialEgoVel = (g_egoVelocityVec[0] * cartesianVec[0] + 
+                                    g_egoVelocityVec[1] * cartesianVec[1] + 
+                                    g_egoVelocityVec[2] * cartesianVec[2]) / range;
+                }
                 measurementPoints[i].doppler = g_pointCloudBuffer[i].velocity - radialEgoVel;
                 measurementPoints[i].snr = 0.0f; /* Nếu cần SNR, phải lấy thêm từ result->objOutSideInfo */
             }

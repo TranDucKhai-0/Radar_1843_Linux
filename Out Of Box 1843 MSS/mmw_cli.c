@@ -88,6 +88,7 @@ static int32_t MmwDemo_CLIChirpQualitySigImgMonCfg (int32_t argc, char* argv[]);
 static int32_t MmwDemo_CLIAnalogMonitorCfg (int32_t argc, char* argv[]);
 static int32_t MmwDemo_CLILvdsStreamCfg (int32_t argc, char* argv[]);
 static int32_t MmwDemo_CLIConfigDataPort (int32_t argc, char* argv[]);
+static int32_t MmwDemo_CLIEgoVelocity (int32_t argc, char* argv[]);
 
 /**************************************************************************
  *************************** Extern Definitions *******************************
@@ -315,6 +316,43 @@ static int32_t MmwDemo_CLISensorStart (int32_t argc, char* argv[])
      * Set the state
      ***********************************************************************************/
     gMmwMssMCB.sensorState = MmwDemo_SensorState_STARTED;
+    return 0;
+}
+
+/**
+ *  @b Description
+ *  @n
+ *      This is the CLI Handler for sending Ego Velocity to DSS
+ *
+ *  @param[in] argc
+ *      Number of arguments
+ *  @param[in] argv
+ *      Arguments (vx_frd, vy_frd, vz_frd)
+ *
+ *  @retval
+ *      Success -   0
+ *  @retval
+ *      Error   -   <0
+ */
+static int32_t MmwDemo_CLIEgoVelocity (int32_t argc, char* argv[])
+{
+    if (argc != 4)
+    {
+        CLI_write ("Error: Invalid usage. Syntax: egoVelocity <vx_frd> <vy_frd> <vz_frd>\n");
+        return -1;
+    }
+
+    float egoVelFrd[3] = {atof(argv[1]), atof(argv[2]), atof(argv[3])};
+    float egoVelRadar[3];
+
+    /* Chuyển hệ trục FRD sang Radar (X phải, Y tiến, Z lên) */
+    egoVelRadar[0] = egoVelFrd[1];  /* Radar_X (Phải) = FRD_Y */
+    egoVelRadar[1] = egoVelFrd[0];  /* Radar_Y (Tiến) = FRD_X */
+    egoVelRadar[2] = -egoVelFrd[2]; /* Radar_Z (Lên)  = -FRD_Z */
+
+    /* Gửi sang DSS qua DPM IOCTL (Mã 0x1234) */
+    DPM_ioctl(gMmwMssMCB.objDetDpmHandle, 0x1234, egoVelRadar, sizeof(egoVelRadar));
+
     return 0;
 }
 
@@ -1437,6 +1475,11 @@ void MmwDemo_CLIInit (uint8_t taskPriority)
     cliCfg.tableEntry[cnt].cmdHandlerFxn  = MmwDemo_CLICalibDataSaveRestore;
     cnt++;
 
+    cliCfg.tableEntry[cnt].cmd            = "egoVelocity";
+    cliCfg.tableEntry[cnt].helpString     = "<vx_frd> <vy_frd> <vz_frd>";
+    cliCfg.tableEntry[cnt].cmdHandlerFxn  = MmwDemo_CLIEgoVelocity;
+    cnt++;
+
     /* Open the CLI: */
     if (CLI_open (&cliCfg) < 0)
     {
@@ -1446,5 +1489,3 @@ void MmwDemo_CLIInit (uint8_t taskPriority)
     System_printf ("Debug: CLI is operational\n");
     return;
 }
-
-

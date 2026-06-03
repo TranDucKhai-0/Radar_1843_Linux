@@ -715,17 +715,6 @@ static uint32_t DPC_ObjDet_GenDopplerWindow(DPU_DopplerProcHWA_Config *cfg)
     {
         winType = MATHUTILS_WIN_RECT;
     }
-    /* Xử lý lệnh Custom để nhận Vận tốc Ego từ MSS */
-    else if (cmd == 0x1234) // Thay bằng Define DPM_CMD_CUSTOM_EGO_VEL chung giữa MSS và DSS
-    {
-        float egoVel;
-        DebugP_assert(argLen == sizeof(float));
-        egoVel = *(float*)arg;
-        
-        /* Cập nhật vận tốc vào module GTRACK */
-        UpdateEgoVelocity(egoVel);
-        DebugP_log1("ObjDet DPC: Nhan Ego Velocity: %f\n", egoVel);
-    }
     else
     {
         winType = DPC_DPU_DOPPLERPROC_FFT_WINDOW_TYPE;
@@ -2429,6 +2418,20 @@ static int32_t DPC_ObjectDetection_ioctl
         objDetObj->isCommonCfgReceived = true;
 
         DebugP_log0("ObjDet DPC: Pre-start Common Config IOCTL processed\n");
+    }
+    /* Xử lý lệnh Custom để nhận Vận tốc Ego 3D từ MSS (Mã 0x1234) */
+    else if (cmd == 0x1234)
+    {
+        float *egoVel;
+        DebugP_assert(argLen == (3 * sizeof(float)));
+        egoVel = (float*)arg;
+        
+        /* Cập nhật vận tốc vector vào module GTRACK */
+        UpdateEgoVelocity(egoVel);
+        
+#ifdef DBG_DPC_OBJDET
+        DebugP_log3("ObjDet DPC: Nhan Ego Vel - X: %f, Y: %f, Z: %f\n", egoVel[0], egoVel[1], egoVel[2]);
+#endif
     }
     else if (cmd == DPC_OBJDET_IOCTL__DYNAMIC_MEASURE_RANGE_BIAS_AND_RX_CHAN_PHASE)
     {
