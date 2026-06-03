@@ -479,7 +479,7 @@ static int32_t MmwDemo_copyResultToHSRAM
         {
             memcpy(ptrCurrBuffer, (void *)targetDescs, itemPayloadLen);
             
-            /* HACK: "Mượn" con trỏ objOut và thuộc tính numObjOut để gửi Target.
+            /* "Mượn" con trỏ objOut và thuộc tính numObjOut để gửi Target.
              * Code bên MSS sẽ cần ép kiểu (GTRACK_targetDesc*) khi lấy ra */
             ptrHsramBuffer->result.objOut = (DPIF_PointCloudCartesian *)ptrCurrBuffer;
             ptrHsramBuffer->result.numObjOut = numTargets;

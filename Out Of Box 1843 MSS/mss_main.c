@@ -638,6 +638,11 @@
 #include <ti/utils/rtrim/rtrimutils.h>
 #endif
 
+#include <ti/alg/gtrack/gtrack.h>
+#ifndef MMWDEMO_OUTPUT_MSG_TRACKER_DATA
+#define MMWDEMO_OUTPUT_MSG_TRACKER_DATA 10
+#endif
+
 /**
  * @brief Task Priority settings:
  * Mmwave task is at higher priority because of potential async messages from BSS
@@ -1185,9 +1190,9 @@ static void MmwDemo_transmitProcessedOutput
     MmwDemo_output_message_tl   tl[MMWDEMO_OUTPUT_MSG_MAX];
     int32_t errCode;
     uint16_t *detMatrix = (uint16_t *)result->detMatrix.data;
-    DPIF_PointCloudCartesian *objOut;
+    GTRACK_targetDesc *targetList;
     cmplx16ImRe_t *azimuthStaticHeatMap;
-    DPIF_PointCloudSideInfo *objOutSideInfo;
+    // DPIF_PointCloudSideInfo *objOutSideInfo;
     DPC_ObjectDetection_Stats *stats;
     
     /* Get subframe configuration */
@@ -1209,15 +1214,15 @@ static void MmwDemo_transmitProcessedOutput
                                                      &errCode);
         DebugP_assert ((uint32_t)detMatrix!= SOC_TRANSLATEADDR_INVALID);
 
-        objOut = (DPIF_PointCloudCartesian *) SOC_translateAddress((uint32_t)result->objOut,
+    targetList = (GTRACK_targetDesc *) SOC_translateAddress((uint32_t)result->objOut,
                                                      SOC_TranslateAddr_Dir_FROM_OTHER_CPU,
                                                      &errCode);
-        DebugP_assert ((uint32_t)objOut != SOC_TRANSLATEADDR_INVALID);
+    DebugP_assert ((uint32_t)targetList != SOC_TRANSLATEADDR_INVALID);
 
-        objOutSideInfo = (DPIF_PointCloudSideInfo *) SOC_translateAddress((uint32_t)result->objOutSideInfo,
-                                                     SOC_TranslateAddr_Dir_FROM_OTHER_CPU,
-                                                     &errCode);
-        DebugP_assert ((uint32_t)objOutSideInfo != SOC_TRANSLATEADDR_INVALID);
+    // objOutSideInfo = (DPIF_PointCloudSideInfo *) SOC_translateAddress((uint32_t)result->objOutSideInfo,
+    //                                              SOC_TranslateAddr_Dir_FROM_OTHER_CPU,
+    //                                              &errCode);
+    // DebugP_assert ((uint32_t)objOutSideInfo != SOC_TRANSLATEADDR_INVALID);
 
         stats = (DPC_ObjectDetection_Stats *) SOC_translateAddress((uint32_t)result->stats,
                                                      SOC_TranslateAddr_Dir_FROM_OTHER_CPU,
@@ -1247,19 +1252,19 @@ static void MmwDemo_transmitProcessedOutput
     if ((pGuiMonSel->detectedObjects == 1) || (pGuiMonSel->detectedObjects == 2) &&
          (result->numObjOut > 0))
     {
-        tl[tlvIdx].type = MMWDEMO_OUTPUT_MSG_DETECTED_POINTS;
-        tl[tlvIdx].length = sizeof(DPIF_PointCloudCartesian) * result->numObjOut;
+        tl[tlvIdx].type = MMWDEMO_OUTPUT_MSG_TRACKER_DATA;
+        tl[tlvIdx].length = sizeof(GTRACK_targetDesc) * result->numObjOut;
         packetLen += sizeof(MmwDemo_output_message_tl) + tl[tlvIdx].length;
         tlvIdx++;
     }
     /* Side info */
-    if ((pGuiMonSel->detectedObjects == 1) && (result->numObjOut > 0))
-    {
-        tl[tlvIdx].type = MMWDEMO_OUTPUT_MSG_DETECTED_POINTS_SIDE_INFO;
-        tl[tlvIdx].length = sizeof(DPIF_PointCloudSideInfo) * result->numObjOut;
-        packetLen += sizeof(MmwDemo_output_message_tl) + tl[tlvIdx].length;
-        tlvIdx++;
-    }
+    // if ((pGuiMonSel->detectedObjects == 1) && (result->numObjOut > 0))
+    // {
+    //     tl[tlvIdx].type = MMWDEMO_OUTPUT_MSG_DETECTED_POINTS_SIDE_INFO;
+    //     tl[tlvIdx].length = sizeof(DPIF_PointCloudSideInfo) * result->numObjOut;
+    //     packetLen += sizeof(MmwDemo_output_message_tl) + tl[tlvIdx].length;
+    //     tlvIdx++;
+    // }
     if (pGuiMonSel->logMagRange)
     {
         tl[tlvIdx].type = MMWDEMO_OUTPUT_MSG_RANGE_PROFILE;
@@ -1328,23 +1333,23 @@ static void MmwDemo_transmitProcessedOutput
                            sizeof(MmwDemo_output_message_tl));
 
         /*Send array of objects */
-        UART_writePolling (uartHandle, (uint8_t*)objOut,
-                           sizeof(DPIF_PointCloudCartesian) * result->numObjOut);
+        UART_writePolling (uartHandle, (uint8_t*)targetList,
+                           sizeof(GTRACK_targetDesc) * result->numObjOut);
         tlvIdx++;
     }
 
     /* Send detected Objects Side Info */
-    if ((pGuiMonSel->detectedObjects == 1) && (result->numObjOut > 0))
-    {
-
-        UART_writePolling (uartHandle,
-                           (uint8_t*)&tl[tlvIdx],
-                           sizeof(MmwDemo_output_message_tl));
-
-        UART_writePolling (uartHandle, (uint8_t*)objOutSideInfo,
-                           sizeof(DPIF_PointCloudSideInfo) * result->numObjOut);
-        tlvIdx++;
-    }
+    // if ((pGuiMonSel->detectedObjects == 1) && (result->numObjOut > 0))
+    // {
+    // 
+    //     UART_writePolling (uartHandle,
+    //                        (uint8_t*)&tl[tlvIdx],
+    //                        sizeof(MmwDemo_output_message_tl));
+    // 
+    //     UART_writePolling (uartHandle, (uint8_t*)objOutSideInfo,
+    //                        sizeof(DPIF_PointCloudSideInfo) * result->numObjOut);
+    //     tlvIdx++;
+    // }
 
     /* Send Range profile */
     if (pGuiMonSel->logMagRange)
@@ -2606,10 +2611,11 @@ void MmwDemo_transferLVDSUserData(uint8_t subFrameIndx,
                                                  &errCode);
     DebugP_assert ((uint32_t)objOut != SOC_TRANSLATEADDR_INVALID);
 
-    objOutSideInfo = (DPIF_PointCloudSideInfo *) SOC_translateAddress((uint32_t)dpcResults->objOutSideInfo,
-                                                 SOC_TranslateAddr_Dir_FROM_OTHER_CPU,
-                                                 &errCode);
-    DebugP_assert ((uint32_t)objOutSideInfo != SOC_TRANSLATEADDR_INVALID);
+    // objOutSideInfo = (DPIF_PointCloudSideInfo *) SOC_translateAddress((uint32_t)dpcResults->objOutSideInfo,
+    //                                              SOC_TranslateAddr_Dir_FROM_OTHER_CPU,
+    //                                              &errCode);
+    // DebugP_assert ((uint32_t)objOutSideInfo != SOC_TRANSLATEADDR_INVALID);
+    objOutSideInfo = NULL;
 
     /* Delete previous SW session if it exists. SW session is being
        reconfigured every frame because number of detected objects
@@ -4015,5 +4021,3 @@ int main (void)
     BIOS_start();
     return 0;
 }
-
-
