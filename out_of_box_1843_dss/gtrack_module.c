@@ -16,12 +16,7 @@ static void* g_pGtrackHandle = NULL;
 static uint32_t g_numDetectedPoints = 0;
 static uint32_t g_numTargets = 0;
 
-/* ====================================================================== */
-/* ĐẨY TOÀN BỘ MẢNG DỮ LIỆU CỦA GTRACK SANG VÙNG NHỚ L3 RAM RỘNG RÃI      */
-// ... (Các dòng pragma của bạn giữ nguyên) ...
-/* ====================================================================== */
-/* ĐẨY TOÀN BỘ MẢNG DỮ LIỆU CỦA GTRACK SANG VÙNG NHỚ L3 RAM RỘNG RÃI      */
-/* ====================================================================== */
+
 #pragma DATA_SECTION(g_pointCloudBuffer, ".l3ram");
 static DPIF_PointCloudCartesian g_pointCloudBuffer[MAX_DETECTED_POINTS];
 
