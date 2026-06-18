@@ -2285,7 +2285,7 @@ __FAR__ const xdc_SizeT ti_sysbios_utils_Load_Module_State_taskList__O = offseto
  *  Define absolute path prefix for this executable's
  *  configuration generated files.
  */
-xdc__META(__ASM__, "@(#)__ASM__ = /home/khai/workspace_ccstheia/out_of_box_1843_dss/isk/configPkg/package/cfg/mmw_dss_pe674");
+xdc__META(__ASM__, "@(#)__ASM__ = /home/charles-datle/UNI/Radar_1843_Linux/out_of_box_1843_dss/isk/configPkg/package/cfg/mmw_dss_pe674");
 
 /*
  *  ======== __ISA__ ========

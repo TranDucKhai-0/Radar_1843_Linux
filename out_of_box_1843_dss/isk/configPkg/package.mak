@@ -15,92 +15,92 @@ XDCCFGDIR = package/cfg/
 # in the event that some included BOM script changes.
 #
 ifneq (clean,$(MAKECMDGOALS))
-/home/khai/ti/xdctools_3_50_08_24_core/packages/xdc/utils.js:
-package.mak: /home/khai/ti/xdctools_3_50_08_24_core/packages/xdc/utils.js
-/home/khai/ti/xdctools_3_50_08_24_core/packages/xdc/xdc.tci:
-package.mak: /home/khai/ti/xdctools_3_50_08_24_core/packages/xdc/xdc.tci
-/home/khai/ti/xdctools_3_50_08_24_core/packages/xdc/template.xs:
-package.mak: /home/khai/ti/xdctools_3_50_08_24_core/packages/xdc/template.xs
-/home/khai/ti/xdctools_3_50_08_24_core/packages/xdc/om2.xs:
-package.mak: /home/khai/ti/xdctools_3_50_08_24_core/packages/xdc/om2.xs
-/home/khai/ti/xdctools_3_50_08_24_core/packages/xdc/xmlgen.xs:
-package.mak: /home/khai/ti/xdctools_3_50_08_24_core/packages/xdc/xmlgen.xs
-/home/khai/ti/xdctools_3_50_08_24_core/packages/xdc/xmlgen2.xs:
-package.mak: /home/khai/ti/xdctools_3_50_08_24_core/packages/xdc/xmlgen2.xs
-/home/khai/ti/xdctools_3_50_08_24_core/packages/xdc/Warnings.xs:
-package.mak: /home/khai/ti/xdctools_3_50_08_24_core/packages/xdc/Warnings.xs
-/home/khai/ti/xdctools_3_50_08_24_core/packages/xdc/IPackage.xs:
-package.mak: /home/khai/ti/xdctools_3_50_08_24_core/packages/xdc/IPackage.xs
-/home/khai/ti/xdctools_3_50_08_24_core/packages/xdc/package.xs:
-package.mak: /home/khai/ti/xdctools_3_50_08_24_core/packages/xdc/package.xs
-/home/khai/ti/xdctools_3_50_08_24_core/packages/xdc/services/global/Clock.xs:
-package.mak: /home/khai/ti/xdctools_3_50_08_24_core/packages/xdc/services/global/Clock.xs
-/home/khai/ti/xdctools_3_50_08_24_core/packages/xdc/services/global/Trace.xs:
-package.mak: /home/khai/ti/xdctools_3_50_08_24_core/packages/xdc/services/global/Trace.xs
-/home/khai/ti/xdctools_3_50_08_24_core/packages/xdc/bld/bld.js:
-package.mak: /home/khai/ti/xdctools_3_50_08_24_core/packages/xdc/bld/bld.js
-/home/khai/ti/xdctools_3_50_08_24_core/packages/xdc/bld/BuildEnvironment.xs:
-package.mak: /home/khai/ti/xdctools_3_50_08_24_core/packages/xdc/bld/BuildEnvironment.xs
-/home/khai/ti/xdctools_3_50_08_24_core/packages/xdc/bld/PackageContents.xs:
-package.mak: /home/khai/ti/xdctools_3_50_08_24_core/packages/xdc/bld/PackageContents.xs
-/home/khai/ti/xdctools_3_50_08_24_core/packages/xdc/bld/_gen.xs:
-package.mak: /home/khai/ti/xdctools_3_50_08_24_core/packages/xdc/bld/_gen.xs
-/home/khai/ti/xdctools_3_50_08_24_core/packages/xdc/bld/Library.xs:
-package.mak: /home/khai/ti/xdctools_3_50_08_24_core/packages/xdc/bld/Library.xs
-/home/khai/ti/xdctools_3_50_08_24_core/packages/xdc/bld/Executable.xs:
-package.mak: /home/khai/ti/xdctools_3_50_08_24_core/packages/xdc/bld/Executable.xs
-/home/khai/ti/xdctools_3_50_08_24_core/packages/xdc/bld/Repository.xs:
-package.mak: /home/khai/ti/xdctools_3_50_08_24_core/packages/xdc/bld/Repository.xs
-/home/khai/ti/xdctools_3_50_08_24_core/packages/xdc/bld/Configuration.xs:
-package.mak: /home/khai/ti/xdctools_3_50_08_24_core/packages/xdc/bld/Configuration.xs
-/home/khai/ti/xdctools_3_50_08_24_core/packages/xdc/bld/Script.xs:
-package.mak: /home/khai/ti/xdctools_3_50_08_24_core/packages/xdc/bld/Script.xs
-/home/khai/ti/xdctools_3_50_08_24_core/packages/xdc/bld/Manifest.xs:
-package.mak: /home/khai/ti/xdctools_3_50_08_24_core/packages/xdc/bld/Manifest.xs
-/home/khai/ti/xdctools_3_50_08_24_core/packages/xdc/bld/Utils.xs:
-package.mak: /home/khai/ti/xdctools_3_50_08_24_core/packages/xdc/bld/Utils.xs
-/home/khai/ti/xdctools_3_50_08_24_core/packages/xdc/bld/ITarget.xs:
-package.mak: /home/khai/ti/xdctools_3_50_08_24_core/packages/xdc/bld/ITarget.xs
-/home/khai/ti/xdctools_3_50_08_24_core/packages/xdc/bld/ITarget2.xs:
-package.mak: /home/khai/ti/xdctools_3_50_08_24_core/packages/xdc/bld/ITarget2.xs
-/home/khai/ti/xdctools_3_50_08_24_core/packages/xdc/bld/ITarget3.xs:
-package.mak: /home/khai/ti/xdctools_3_50_08_24_core/packages/xdc/bld/ITarget3.xs
-/home/khai/ti/xdctools_3_50_08_24_core/packages/xdc/bld/ITargetFilter.xs:
-package.mak: /home/khai/ti/xdctools_3_50_08_24_core/packages/xdc/bld/ITargetFilter.xs
-/home/khai/ti/xdctools_3_50_08_24_core/packages/xdc/bld/package.xs:
-package.mak: /home/khai/ti/xdctools_3_50_08_24_core/packages/xdc/bld/package.xs
+/home/charles-datle/ti/xdctools_3_50_08_24_core/packages/xdc/utils.js:
+package.mak: /home/charles-datle/ti/xdctools_3_50_08_24_core/packages/xdc/utils.js
+/home/charles-datle/ti/xdctools_3_50_08_24_core/packages/xdc/xdc.tci:
+package.mak: /home/charles-datle/ti/xdctools_3_50_08_24_core/packages/xdc/xdc.tci
+/home/charles-datle/ti/xdctools_3_50_08_24_core/packages/xdc/template.xs:
+package.mak: /home/charles-datle/ti/xdctools_3_50_08_24_core/packages/xdc/template.xs
+/home/charles-datle/ti/xdctools_3_50_08_24_core/packages/xdc/om2.xs:
+package.mak: /home/charles-datle/ti/xdctools_3_50_08_24_core/packages/xdc/om2.xs
+/home/charles-datle/ti/xdctools_3_50_08_24_core/packages/xdc/xmlgen.xs:
+package.mak: /home/charles-datle/ti/xdctools_3_50_08_24_core/packages/xdc/xmlgen.xs
+/home/charles-datle/ti/xdctools_3_50_08_24_core/packages/xdc/xmlgen2.xs:
+package.mak: /home/charles-datle/ti/xdctools_3_50_08_24_core/packages/xdc/xmlgen2.xs
+/home/charles-datle/ti/xdctools_3_50_08_24_core/packages/xdc/Warnings.xs:
+package.mak: /home/charles-datle/ti/xdctools_3_50_08_24_core/packages/xdc/Warnings.xs
+/home/charles-datle/ti/xdctools_3_50_08_24_core/packages/xdc/IPackage.xs:
+package.mak: /home/charles-datle/ti/xdctools_3_50_08_24_core/packages/xdc/IPackage.xs
+/home/charles-datle/ti/xdctools_3_50_08_24_core/packages/xdc/package.xs:
+package.mak: /home/charles-datle/ti/xdctools_3_50_08_24_core/packages/xdc/package.xs
+/home/charles-datle/ti/xdctools_3_50_08_24_core/packages/xdc/services/global/Clock.xs:
+package.mak: /home/charles-datle/ti/xdctools_3_50_08_24_core/packages/xdc/services/global/Clock.xs
+/home/charles-datle/ti/xdctools_3_50_08_24_core/packages/xdc/services/global/Trace.xs:
+package.mak: /home/charles-datle/ti/xdctools_3_50_08_24_core/packages/xdc/services/global/Trace.xs
+/home/charles-datle/ti/xdctools_3_50_08_24_core/packages/xdc/bld/bld.js:
+package.mak: /home/charles-datle/ti/xdctools_3_50_08_24_core/packages/xdc/bld/bld.js
+/home/charles-datle/ti/xdctools_3_50_08_24_core/packages/xdc/bld/BuildEnvironment.xs:
+package.mak: /home/charles-datle/ti/xdctools_3_50_08_24_core/packages/xdc/bld/BuildEnvironment.xs
+/home/charles-datle/ti/xdctools_3_50_08_24_core/packages/xdc/bld/PackageContents.xs:
+package.mak: /home/charles-datle/ti/xdctools_3_50_08_24_core/packages/xdc/bld/PackageContents.xs
+/home/charles-datle/ti/xdctools_3_50_08_24_core/packages/xdc/bld/_gen.xs:
+package.mak: /home/charles-datle/ti/xdctools_3_50_08_24_core/packages/xdc/bld/_gen.xs
+/home/charles-datle/ti/xdctools_3_50_08_24_core/packages/xdc/bld/Library.xs:
+package.mak: /home/charles-datle/ti/xdctools_3_50_08_24_core/packages/xdc/bld/Library.xs
+/home/charles-datle/ti/xdctools_3_50_08_24_core/packages/xdc/bld/Executable.xs:
+package.mak: /home/charles-datle/ti/xdctools_3_50_08_24_core/packages/xdc/bld/Executable.xs
+/home/charles-datle/ti/xdctools_3_50_08_24_core/packages/xdc/bld/Repository.xs:
+package.mak: /home/charles-datle/ti/xdctools_3_50_08_24_core/packages/xdc/bld/Repository.xs
+/home/charles-datle/ti/xdctools_3_50_08_24_core/packages/xdc/bld/Configuration.xs:
+package.mak: /home/charles-datle/ti/xdctools_3_50_08_24_core/packages/xdc/bld/Configuration.xs
+/home/charles-datle/ti/xdctools_3_50_08_24_core/packages/xdc/bld/Script.xs:
+package.mak: /home/charles-datle/ti/xdctools_3_50_08_24_core/packages/xdc/bld/Script.xs
+/home/charles-datle/ti/xdctools_3_50_08_24_core/packages/xdc/bld/Manifest.xs:
+package.mak: /home/charles-datle/ti/xdctools_3_50_08_24_core/packages/xdc/bld/Manifest.xs
+/home/charles-datle/ti/xdctools_3_50_08_24_core/packages/xdc/bld/Utils.xs:
+package.mak: /home/charles-datle/ti/xdctools_3_50_08_24_core/packages/xdc/bld/Utils.xs
+/home/charles-datle/ti/xdctools_3_50_08_24_core/packages/xdc/bld/ITarget.xs:
+package.mak: /home/charles-datle/ti/xdctools_3_50_08_24_core/packages/xdc/bld/ITarget.xs
+/home/charles-datle/ti/xdctools_3_50_08_24_core/packages/xdc/bld/ITarget2.xs:
+package.mak: /home/charles-datle/ti/xdctools_3_50_08_24_core/packages/xdc/bld/ITarget2.xs
+/home/charles-datle/ti/xdctools_3_50_08_24_core/packages/xdc/bld/ITarget3.xs:
+package.mak: /home/charles-datle/ti/xdctools_3_50_08_24_core/packages/xdc/bld/ITarget3.xs
+/home/charles-datle/ti/xdctools_3_50_08_24_core/packages/xdc/bld/ITargetFilter.xs:
+package.mak: /home/charles-datle/ti/xdctools_3_50_08_24_core/packages/xdc/bld/ITargetFilter.xs
+/home/charles-datle/ti/xdctools_3_50_08_24_core/packages/xdc/bld/package.xs:
+package.mak: /home/charles-datle/ti/xdctools_3_50_08_24_core/packages/xdc/bld/package.xs
 package.mak: config.bld
-/home/khai/ti/bios_6_73_01_01/packages/ti/targets/ITarget.xs:
-package.mak: /home/khai/ti/bios_6_73_01_01/packages/ti/targets/ITarget.xs
-/home/khai/ti/bios_6_73_01_01/packages/ti/targets/C28_large.xs:
-package.mak: /home/khai/ti/bios_6_73_01_01/packages/ti/targets/C28_large.xs
-/home/khai/ti/bios_6_73_01_01/packages/ti/targets/C28_float.xs:
-package.mak: /home/khai/ti/bios_6_73_01_01/packages/ti/targets/C28_float.xs
-/home/khai/ti/bios_6_73_01_01/packages/ti/targets/package.xs:
-package.mak: /home/khai/ti/bios_6_73_01_01/packages/ti/targets/package.xs
-/home/khai/ti/bios_6_73_01_01/packages/ti/targets/elf/ITarget.xs:
-package.mak: /home/khai/ti/bios_6_73_01_01/packages/ti/targets/elf/ITarget.xs
-/home/khai/ti/bios_6_73_01_01/packages/ti/targets/elf/C28_float.xs:
-package.mak: /home/khai/ti/bios_6_73_01_01/packages/ti/targets/elf/C28_float.xs
-/home/khai/ti/bios_6_73_01_01/packages/ti/targets/elf/package.xs:
-package.mak: /home/khai/ti/bios_6_73_01_01/packages/ti/targets/elf/package.xs
+/home/charles-datle/ti/bios_6_73_01_01/packages/ti/targets/ITarget.xs:
+package.mak: /home/charles-datle/ti/bios_6_73_01_01/packages/ti/targets/ITarget.xs
+/home/charles-datle/ti/bios_6_73_01_01/packages/ti/targets/C28_large.xs:
+package.mak: /home/charles-datle/ti/bios_6_73_01_01/packages/ti/targets/C28_large.xs
+/home/charles-datle/ti/bios_6_73_01_01/packages/ti/targets/C28_float.xs:
+package.mak: /home/charles-datle/ti/bios_6_73_01_01/packages/ti/targets/C28_float.xs
+/home/charles-datle/ti/bios_6_73_01_01/packages/ti/targets/package.xs:
+package.mak: /home/charles-datle/ti/bios_6_73_01_01/packages/ti/targets/package.xs
+/home/charles-datle/ti/bios_6_73_01_01/packages/ti/targets/elf/ITarget.xs:
+package.mak: /home/charles-datle/ti/bios_6_73_01_01/packages/ti/targets/elf/ITarget.xs
+/home/charles-datle/ti/bios_6_73_01_01/packages/ti/targets/elf/C28_float.xs:
+package.mak: /home/charles-datle/ti/bios_6_73_01_01/packages/ti/targets/elf/C28_float.xs
+/home/charles-datle/ti/bios_6_73_01_01/packages/ti/targets/elf/package.xs:
+package.mak: /home/charles-datle/ti/bios_6_73_01_01/packages/ti/targets/elf/package.xs
 package.mak: package.bld
-/home/khai/ti/xdctools_3_50_08_24_core/packages/xdc/tools/configuro/template/compiler.opt.xdt:
-package.mak: /home/khai/ti/xdctools_3_50_08_24_core/packages/xdc/tools/configuro/template/compiler.opt.xdt
-/home/khai/ti/xdctools_3_50_08_24_core/packages/xdc/services/io/File.xs:
-package.mak: /home/khai/ti/xdctools_3_50_08_24_core/packages/xdc/services/io/File.xs
-/home/khai/ti/xdctools_3_50_08_24_core/packages/xdc/services/io/package.xs:
-package.mak: /home/khai/ti/xdctools_3_50_08_24_core/packages/xdc/services/io/package.xs
-/home/khai/ti/xdctools_3_50_08_24_core/packages/xdc/tools/configuro/template/compiler.defs.xdt:
-package.mak: /home/khai/ti/xdctools_3_50_08_24_core/packages/xdc/tools/configuro/template/compiler.defs.xdt
-/home/khai/ti/xdctools_3_50_08_24_core/packages/xdc/tools/configuro/template/custom.mak.exe.xdt:
-package.mak: /home/khai/ti/xdctools_3_50_08_24_core/packages/xdc/tools/configuro/template/custom.mak.exe.xdt
-/home/khai/ti/xdctools_3_50_08_24_core/packages/xdc/tools/configuro/template/package.xs.xdt:
-package.mak: /home/khai/ti/xdctools_3_50_08_24_core/packages/xdc/tools/configuro/template/package.xs.xdt
+/home/charles-datle/ti/xdctools_3_50_08_24_core/packages/xdc/tools/configuro/template/compiler.opt.xdt:
+package.mak: /home/charles-datle/ti/xdctools_3_50_08_24_core/packages/xdc/tools/configuro/template/compiler.opt.xdt
+/home/charles-datle/ti/xdctools_3_50_08_24_core/packages/xdc/services/io/File.xs:
+package.mak: /home/charles-datle/ti/xdctools_3_50_08_24_core/packages/xdc/services/io/File.xs
+/home/charles-datle/ti/xdctools_3_50_08_24_core/packages/xdc/services/io/package.xs:
+package.mak: /home/charles-datle/ti/xdctools_3_50_08_24_core/packages/xdc/services/io/package.xs
+/home/charles-datle/ti/xdctools_3_50_08_24_core/packages/xdc/tools/configuro/template/compiler.defs.xdt:
+package.mak: /home/charles-datle/ti/xdctools_3_50_08_24_core/packages/xdc/tools/configuro/template/compiler.defs.xdt
+/home/charles-datle/ti/xdctools_3_50_08_24_core/packages/xdc/tools/configuro/template/custom.mak.exe.xdt:
+package.mak: /home/charles-datle/ti/xdctools_3_50_08_24_core/packages/xdc/tools/configuro/template/custom.mak.exe.xdt
+/home/charles-datle/ti/xdctools_3_50_08_24_core/packages/xdc/tools/configuro/template/package.xs.xdt:
+package.mak: /home/charles-datle/ti/xdctools_3_50_08_24_core/packages/xdc/tools/configuro/template/package.xs.xdt
 endif
 
-ti.targets.elf.C674.rootDir ?= /home/khai/ti/ti-cgt-c6000_8.3.3
-ti.targets.elf.packageBase ?= /home/khai/ti/bios_6_73_01_01/packages/ti/targets/elf/
+ti.targets.elf.C674.rootDir ?= /home/charles-datle/ti/ti-cgt-c6000_8.3.3
+ti.targets.elf.packageBase ?= /home/charles-datle/ti/bios_6_73_01_01/packages/ti/targets/elf/
 .PRECIOUS: $(XDCCFGDIR)/%.oe674
 .PHONY: all,e674 .dlls,e674 .executables,e674 test,e674
 all,e674: .executables,e674

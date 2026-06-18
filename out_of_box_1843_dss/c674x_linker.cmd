@@ -81,11 +81,15 @@ SECTIONS
        and allowed to overflow into Z and cannot be split from Y to Z. Some sections
        like bss are not allowed to be split so > notation is used for them */
 
-    .fardata:  {} >> L2SRAM_UMAP0 | L2SRAM_UMAP1
-    .const:    {} >> L2SRAM_UMAP0 | L2SRAM_UMAP1
-    .switch:   {} >> L2SRAM_UMAP0 | L2SRAM_UMAP1
-    .cio:      {} >> L2SRAM_UMAP0 | L2SRAM_UMAP1
-    .data:     {} >> L2SRAM_UMAP0 | L2SRAM_UMAP1
+    /* Ép các section gây tràn sang vùng L3_RAM nếu L2_SRAM bị đầy */
+    /* L3SRAM là vùng nhớ có kích thước lớn nhất trên chip */
+    
+    .fardata:  {} >> L2SRAM_UMAP0 | L2SRAM_UMAP1 | L3SRAM
+    .const:    {} >> L2SRAM_UMAP0 | L2SRAM_UMAP1 | L3SRAM
+    .switch:   {} >> L2SRAM_UMAP0 | L2SRAM_UMAP1 | L3SRAM
+    .cio:      {} >> L2SRAM_UMAP0 | L2SRAM_UMAP1 | L3SRAM
+    .bss:      {} > L2SRAM_UMAP0 | L2SRAM_UMAP1
+    .stack:    {} > L2SRAM_UMAP0 | L2SRAM_UMAP1
 
     .rodata:   {} > L2SRAM_UMAP0 | L2SRAM_UMAP1
     .bss:      {} > L2SRAM_UMAP0 | L2SRAM_UMAP1

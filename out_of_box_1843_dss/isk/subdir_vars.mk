@@ -14,6 +14,7 @@ C_SRCS += \
 ../antenna_geometry.c \
 ../data_path.c \
 ../dss_main.c \
+../gtrack_module.c \
 ../objectdetection.c 
 
 GEN_CMDS += \
@@ -30,6 +31,7 @@ C_DEPS += \
 ./antenna_geometry.d \
 ./data_path.d \
 ./dss_main.d \
+./gtrack_module.d \
 ./objectdetection.d 
 
 GEN_OPTS += \
@@ -39,6 +41,7 @@ OBJS += \
 ./antenna_geometry.oe674 \
 ./data_path.oe674 \
 ./dss_main.oe674 \
+./gtrack_module.oe674 \
 ./objectdetection.oe674 
 
 GEN_MISC_DIRS__QUOTED += \
@@ -48,12 +51,14 @@ OBJS__QUOTED += \
 "antenna_geometry.oe674" \
 "data_path.oe674" \
 "dss_main.oe674" \
+"gtrack_module.oe674" \
 "objectdetection.oe674" 
 
 C_DEPS__QUOTED += \
 "antenna_geometry.d" \
 "data_path.d" \
 "dss_main.d" \
+"gtrack_module.d" \
 "objectdetection.d" 
 
 GEN_FILES__QUOTED += \
@@ -64,6 +69,7 @@ C_SRCS__QUOTED += \
 "../antenna_geometry.c" \
 "../data_path.c" \
 "../dss_main.c" \
+"../gtrack_module.c" \
 "../objectdetection.c" 
 
 

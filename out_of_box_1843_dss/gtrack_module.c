@@ -7,20 +7,45 @@
 #include <ti/alg/gtrack/gtrack.h>
 #include <ti/alg/gtrack/include/gtrack_int.h>
 
-/* Các hằng số  */
-#define GTRACK_TASK_PRIORITY        4
-#define MAX_DETECTED_POINTS         1000
-#define MAX_TRACKING_TARGETS        20
 
+/*Đây là note fix của Đạt Lê, 18 tháng 6 2026*/
 /* Biến toàn cục */
 static Semaphore_Handle g_gtrackSemHandle;
-static void* g_pGtrackHandle = NULL;
-static DPIF_PointCloudCartesian g_pointCloudBuffer[MAX_DETECTED_POINTS];
-static uint32_t g_numDetectedPoints = 0;
-
-static GTRACK_targetDesc g_targetDescs[MAX_TRACKING_TARGETS];
-static uint32_t g_numTargets = 0;
 Semaphore_Handle g_gtrackDoneSemHandle;
+static void* g_pGtrackHandle = NULL;
+static uint32_t g_numDetectedPoints = 0;
+static uint32_t g_numTargets = 0;
+
+/* ====================================================================== */
+/* ĐẨY TOÀN BỘ MẢNG DỮ LIỆU CỦA GTRACK SANG VÙNG NHỚ L3 RAM RỘNG RÃI      */
+// ... (Các dòng pragma của bạn giữ nguyên) ...
+/* ====================================================================== */
+/* ĐẨY TOÀN BỘ MẢNG DỮ LIỆU CỦA GTRACK SANG VÙNG NHỚ L3 RAM RỘNG RÃI      */
+/* ====================================================================== */
+#pragma DATA_SECTION(g_pointCloudBuffer, ".l3ram");
+static DPIF_PointCloudCartesian g_pointCloudBuffer[MAX_DETECTED_POINTS];
+
+#pragma DATA_SECTION(g_targetDescs, ".l3ram");
+static GTRACK_targetDesc g_targetDescs[MAX_TRACKING_TARGETS];
+
+#pragma DATA_SECTION(g_measurementPoints, ".l3ram");
+static GTRACK_measurementPoint g_measurementPoints[MAX_DETECTED_POINTS];
+
+#pragma DATA_SECTION(g_targetDescsLocal, ".l3ram");
+static GTRACK_targetDesc g_targetDescsLocal[MAX_TRACKING_TARGETS];
+
+#pragma DATA_SECTION(g_mIndex, ".l3ram");
+static uint8_t g_mIndex[MAX_DETECTED_POINTS];
+
+#pragma DATA_SECTION(g_uIndex, ".l3ram");
+static uint8_t g_uIndex[MAX_DETECTED_POINTS];
+
+#pragma DATA_SECTION(g_presence, ".l3ram");
+static uint8_t g_presence[MAX_TRACKING_TARGETS];
+
+#pragma DATA_SECTION(g_benchmarks, ".l3ram");
+static uint32_t g_benchmarks[GTRACK_BENCHMARK_SIZE];
+/* ====================================================================== */
 
 /* Lưu vector vận tốc 3D của chính radar (Ego-Velocity) nhận từ MSS qua hệ trục Radar (X phải, Y tiến, Z lên) */
 static float g_egoVelocityVec[3] = {0.0f, 0.0f, 0.0f};
@@ -57,64 +82,52 @@ void GetGtrackTargetList(GTRACK_targetDesc *targetList, uint32_t *numTargets)
  */
 static void _ProcessGtrackTask(UArg arg0, UArg arg1)
 {
-    GTRACK_measurementPoint measurementPoints[MAX_DETECTED_POINTS];
-    GTRACK_targetDesc targetDescs[MAX_TRACKING_TARGETS];
-    uint32_t numTargets;
-    uint8_t mIndex[MAX_DETECTED_POINTS];
-    uint32_t benchmarks[GTRACK_BENCHMARK_SIZE];
+    /* Chỉ còn lại các biến cục bộ siêu nhẹ */
+    uint16_t numTargets;
+    uint32_t i; 
 
     while (1)
     {
-        /* Đợi cờ báo hiệu có dữ liệu Point Cloud mới từ OOB */
         Semaphore_pend(g_gtrackSemHandle, BIOS_WAIT_FOREVER);
 
-        /* Luôn chạy GTRACK kể cả khi không có Point Cloud (để duy trì thuật toán theo dõi/dự đoán) */
         if (IsGtrackInitialized())
         {
-            /* Chuyển đổi OOB Point Cloud Cartesian -> GTRACK Spherical */
-            for (uint32_t i = 0; i < g_numDetectedPoints; i++)
+            for (i = 0; i < g_numDetectedPoints; i++)
             {
-                /* Theo thư viện, array cartesian cần 6 tham số [x, y, z, vx, vy, vz] cho 3DV */
-                float cartesianVec[6] = {0.0f};
+                float cartesianVec[9] = {0.0f};
                 cartesianVec[0] = g_pointCloudBuffer[i].x;
                 cartesianVec[1] = g_pointCloudBuffer[i].y;
                 cartesianVec[2] = g_pointCloudBuffer[i].z;
-                /* Để trống vx, vy, vz vì OOB chỉ cung cấp velocity (đã là vận tốc xuyên tâm) */
                 
-                /* Dùng hàm nội bộ của GTRACK để chuyển đổi Cartesian -> Spherical */
-                float sphericalVec[4] = {0.0f}; /* [Range, Azimuth, Elevation, Doppler] */
-                gtrack_cartesian2spherical(GTRACK_STATE_VECTORS_3DV, cartesianVec, sphericalVec);
+                float sphericalVec[4] = {0.0f}; 
+                gtrack_cartesian2spherical(GTRACK_STATE_VECTORS_3DA, cartesianVec, sphericalVec);
 
-                measurementPoints[i].range = sphericalVec[0];
-                measurementPoints[i].azimuth = sphericalVec[1];
-                measurementPoints[i].elevation = sphericalVec[2];
-                measurementPoints[i].doppler = sphericalVec[3];
+                /* Dùng trực tiếp mảng toàn cục g_measurementPoints */
+                g_measurementPoints[i].array[0] = sphericalVec[0]; 
+                g_measurementPoints[i].array[1] = sphericalVec[1]; 
+                g_measurementPoints[i].array[2] = sphericalVec[2]; 
 
-                /* BÙ TRỪ VẬN TỐC THEO VECTOR 3D (EGO-VELOCITY COMPENSATION) */
                 float radialEgoVel = 0.0f;
                 float range = sphericalVec[0];
-                
-                /* Tránh chia cho 0 khi vật ở quá gần tâm */
                 if (range > 0.01f)
                 {
-                    /* Phép chiếu Dot Product: (V_ego . P_target) / |P_target| */
                     radialEgoVel = (g_egoVelocityVec[0] * cartesianVec[0] + 
                                     g_egoVelocityVec[1] * cartesianVec[1] + 
                                     g_egoVelocityVec[2] * cartesianVec[2]) / range;
                 }
-                measurementPoints[i].doppler = g_pointCloudBuffer[i].velocity - radialEgoVel;
-                measurementPoints[i].snr = 0.0f; /* Nếu cần SNR, phải lấy thêm từ result->objOutSideInfo */
+                g_measurementPoints[i].array[3] = g_pointCloudBuffer[i].velocity - radialEgoVel;
+                g_measurementPoints[i].snr      = 0.0f; 
             }
 
-            /* Chạy thuật toán Tracking */
-            gtrack_step(g_pGtrackHandle, measurementPoints, NULL, g_numDetectedPoints, 
-                        targetDescs, &numTargets, mIndex, benchmarks);
+            /* Truyền các mảng toàn cục vào thuật toán GTRACK */
+            gtrack_step(g_pGtrackHandle, g_measurementPoints, NULL, (uint16_t)g_numDetectedPoints, 
+                        g_targetDescsLocal, &numTargets, g_mIndex, g_uIndex, g_presence, g_benchmarks);
 
-            /* Lưu kết quả vào biến cục bộ để DPM Task lấy */
-            memcpy(g_targetDescs, targetDescs, numTargets * sizeof(GTRACK_targetDesc));
+            /* Gán giá trị đích */
+            memcpy(g_targetDescs, g_targetDescsLocal, numTargets * sizeof(GTRACK_targetDesc));
             g_numTargets = numTargets;
-
-            /* Báo hiệu cho luồng DSS DPM là đã xử lý xong */
+            g_numDetectedPoints = 0; 
+            
             Semaphore_post(g_gtrackDoneSemHandle);
         }
     }
@@ -128,15 +141,18 @@ void InitGtrackModule(void)
     memset(&config, 0, sizeof(GTRACK_moduleConfig));
 
     /* Cấu hình GTRACK cơ bản dựa trên yêu cầu yeu_cau.txt */
-    config.stateVectorType = GTRACK_STATE_VECTORS_3DV;
+    config.stateVectorType = GTRACK_STATE_VECTORS_3DA;
     config.verbose = GTRACK_VERBOSE_NONE;
     config.deltaT = 0.0333f;                  /* 30 fps */
     config.maxNumPoints = MAX_DETECTED_POINTS;
     config.maxNumTracks = MAX_TRACKING_TARGETS;
     config.maxRadialVelocity = 30.0f;         /* Max 30m/s */
     config.radialVelocityResolution = 0.5f; 
-    config.maxAcceleration = 5.0f; 
-
+    config.maxAcceleration[0] = 5.0f; 
+    config.maxAcceleration[1] = 5.0f; 
+    config.maxAcceleration[2] = 5.0f;
+    /* Cấu hình giới hạn gia tốc tối đa (5.0 m/s^2) cho cả 3 trục không gian (X, Y, Z) */
+    
     g_pGtrackHandle = gtrack_create(&config, &errCode);
     
     /* Khởi tạo Semaphore để đánh thức Task */
@@ -152,29 +168,55 @@ void CreateGtrackTask(void)
 {
     Task_Params taskParams;
     Task_Params_init(&taskParams);
-    taskParams.priority = GTRACK_TASK_PRIORITY; /* Ưu tiên thấp hơn DPM (5) */
-    taskParams.stackSize = 4 * 1024;
+    taskParams.priority = GTRACK_TASK_PRIORITY; 
+    
+    /* GIẢM STACK XUỐNG 2KB VÌ DỮ LIỆU ĐÃ NẰM HẾT Ở L3 RAM */
+    taskParams.stackSize = 2 * 1024; 
+    
     Task_create(_ProcessGtrackTask, &taskParams, NULL);
 }
 
 void SendPointCloudToGtrack(DPIF_PointCloudCartesian *pPointCloud, uint32_t numPoints)
 {
-    if (numPoints > MAX_DETECTED_POINTS)
+    /* Kiểm tra giới hạn để tránh tràn bộ đệm MAX_DETECTED_POINTS */
+    if (g_numDetectedPoints + numPoints > MAX_DETECTED_POINTS)
     {
-        numPoints = MAX_DETECTED_POINTS;
+        numPoints = MAX_DETECTED_POINTS - g_numDetectedPoints;
     }
 
-    g_numDetectedPoints = numPoints;
-
-    /* Copy dữ liệu vào vùng nhớ tĩnh của module và kích hoạt semaphore */
+    /* Thực hiện tích lũy nối đuôi dữ liệu */
     if (pPointCloud != NULL && numPoints > 0)
     {
-        memcpy(g_pointCloudBuffer, pPointCloud, numPoints * sizeof(DPIF_PointCloudCartesian));
-    }
-    else
-    {
-        g_numDetectedPoints = 0;
+        memcpy((void *)&g_pointCloudBuffer[g_numDetectedPoints], (const void *)pPointCloud, numPoints * sizeof(DPIF_PointCloudCartesian));
+        g_numDetectedPoints += numPoints; 
     }
     
+    /* Kích hoạt semaphore để Task GTRACK thức dậy xử lý */
     Semaphore_post(g_gtrackSemHandle);
 }
+
+/* CÁC HÀM PORTING BẮT BUỘC ĐỂ THƯ VIỆN GTRACK HOẠT ĐỘNG                  */
+#include <stdlib.h> 
+
+/* Hàm cấp phát bộ nhớ cho GTRACK khi khởi tạo */
+void *gtrack_alloc(uint32_t numElements, uint32_t sizeInBytes)
+{
+    return malloc(numElements * sizeInBytes);
+}
+
+/* Hàm giải phóng bộ nhớ (thường dùng khi xóa GTRACK) */
+void gtrack_free(void *pFree, uint32_t sizeInBytes)
+{
+    if (pFree != NULL)
+    {
+        free(pFree);
+    }
+}
+
+/* Hàm in log của GTRACK */
+void gtrack_log(GTRACK_VERBOSE_TYPE level, const char *format, ...)
+{
+    /* Chúng ta để trống hàm này để tiết kiệm tài nguyên xử lý của chip, 
+       không cần in log của thư viện ra màn hình */
+}
+/* ====================================================================== */

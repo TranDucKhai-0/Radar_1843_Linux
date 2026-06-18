@@ -9,9 +9,9 @@
  */
 
 
--l"/home/khai/workspace_ccstheia/out_of_box_1843_dss/isk/configPkg/package/cfg/mmw_dss_pe674.oe674"
--l"/home/khai/workspace_ccstheia/out_of_box_1843_dss/src/sysbios/sysbios.ae674"
--l"/home/khai/ti/bios_6_73_01_01/packages/ti/targets/rts6000/lib/boot.ae674"
+-l"/home/charles-datle/UNI/Radar_1843_Linux/out_of_box_1843_dss/isk/configPkg/package/cfg/mmw_dss_pe674.oe674"
+-l"/home/charles-datle/UNI/Radar_1843_Linux/out_of_box_1843_dss/src/sysbios/sysbios.ae674"
+-l"/home/charles-datle/ti/bios_6_73_01_01/packages/ti/targets/rts6000/lib/boot.ae674"
 
 --retain="*(xdc.meta)"
 

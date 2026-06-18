@@ -19,6 +19,6 @@ if (!(target instanceof xdc.module("xdc.bld.ITarget").Module)) {
 target.ccOpts.prefix = unescape("--enum_type%3Dint%20") + target.ccOpts.prefix;
 
 /* configuro was passed the target's rootDir explicitly */
-target.rootDir = '/home/khai/ti/ti-cgt-c6000_8.3.3';
+target.rootDir = '/home/charles-datle/ti/ti-cgt-c6000_8.3.3';
 
 Build.targets = [target];
