@@ -108,8 +108,8 @@
                                     <listOptionValue value="${TI_MATHLIB_C674X_INSTALL_DIR}/packages/ti/mathlib/lib"/>
                                     <listOptionValue value="${COM_TI_MMWAVE_SDK_INSTALL_DIR}/packages/ti/datapath/dpc/dpu/aoaproc/lib"/>
                                     <listOptionValue value="${CG_TOOL_ROOT}/include"/>
-                                    <listOptionValue value="/home/charles-datle/ti/mmwave_sdk_03_06_02_00-LTS/packages/ti/alg/gtrack/lib"/>
-                                    <listOptionValue value="/home/charles-datle/ti/mmwave_sdk_03_06_02_00-LTS/packages/ti/alg/gtrack/lib"/>
+                                    <listOptionValue value="${COM_TI_MMWAVE_SDK_INSTALL_DIR}/packages/ti/alg/gtrack/lib"/>
+                                    <listOptionValue value="${COM_TI_MMWAVE_SDK_INSTALL_DIR}/packages/ti/alg/gtrack/lib"/>
                                 </option>
                                 <option id="com.ti.ccstudio.buildDefinitions.C6000_8.3.linkerID.LIBRARY.532799000" superClass="com.ti.ccstudio.buildDefinitions.C6000_8.3.linkerID.LIBRARY" valueType="libs">
                                     <listOptionValue value="${COM_TI_BIOS_LIBRARIES}"/>
@@ -138,8 +138,8 @@
                                     <listOptionValue value="rts6740_elf.lib"/>
                                     <listOptionValue value="libaoaproc_hwa_xwr18xx.ae674"/>
                                     <listOptionValue value="libc.a"/>
-                                    <listOptionValue value="/home/charles-datle/ti/mmwave_sdk_03_06_02_00-LTS/packages/ti/alg/gtrack/lib/libgtrack3D.ae674"/>
-                                    <listOptionValue value="/home/charles-datle/ti/mmwave_sdk_03_06_02_00-LTS/packages/ti/alg/gtrack/lib/libgtrack2D.ae674"/>
+                                    <listOptionValue value="${COM_TI_MMWAVE_SDK_INSTALL_DIR}/packages/ti/alg/gtrack/lib/libgtrack3D.ae674"/>
+                                    <listOptionValue value="${COM_TI_MMWAVE_SDK_INSTALL_DIR}/packages/ti/alg/gtrack/lib/libgtrack2D.ae674"/>
                                 </option>
                                 <option id="com.ti.ccstudio.buildDefinitions.C6000_8.3.linkerID.DEFINE.582505452" superClass="com.ti.ccstudio.buildDefinitions.C6000_8.3.linkerID.DEFINE" valueType="definedSymbols">
                                     <listOptionValue value="MMWAVE_L3RAM_NUM_BANK=6"/>

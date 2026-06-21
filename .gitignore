@@ -32,3 +32,4 @@
 
 # Other temporary or local IDE files
 .xdchelp
+**/src/makefile.libs
