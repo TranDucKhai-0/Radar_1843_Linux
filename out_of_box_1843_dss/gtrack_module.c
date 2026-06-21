@@ -29,9 +29,6 @@ static GTRACK_targetDesc g_targetDescs[MAX_TRACKING_TARGETS];
 #pragma DATA_SECTION(g_measurementPoints, ".l3ram");
 static GTRACK_measurementPoint g_measurementPoints[MAX_DETECTED_POINTS];
 
-#pragma DATA_SECTION(g_targetDescsLocal, ".l3ram");
-static GTRACK_targetDesc g_targetDescsLocal[MAX_TRACKING_TARGETS];
-
 #pragma DATA_SECTION(g_mIndex, ".l3ram");
 static uint8_t g_mIndex[MAX_DETECTED_POINTS];
 
@@ -73,6 +70,16 @@ void GetGtrackTargetList(GTRACK_targetDesc *targetList, uint32_t *numTargets)
         memcpy(targetList, g_targetDescs, g_numTargets * sizeof(GTRACK_targetDesc));
         *numTargets = g_numTargets;
     }
+}
+
+/* Lấy trực tiếp con trỏ đến danh sách Target */
+GTRACK_targetDesc* GetGtrackTargetListPointer(uint32_t *numTargets)
+{
+    if (numTargets != NULL)
+    {
+        *numTargets = g_numTargets;
+    }
+    return g_targetDescs;
 }
 
 /**
@@ -125,10 +132,9 @@ static void _ProcessGtrackTask(UArg arg0, UArg arg1)
 
             /* Truyền các mảng toàn cục vào thuật toán GTRACK với số điểm hợp lệ thực tế */
             gtrack_step(g_pGtrackHandle, g_measurementPoints, NULL, (uint16_t)numValidPoints, 
-                        g_targetDescsLocal, &numTargets, g_mIndex, g_uIndex, g_presence, g_benchmarks);
+                        g_targetDescs, &numTargets, g_mIndex, g_uIndex, g_presence, g_benchmarks);
 
             /* Gán giá trị đích */
-            memcpy(g_targetDescs, g_targetDescsLocal, numTargets * sizeof(GTRACK_targetDesc));
             g_numTargets = numTargets;
             g_numDetectedPoints = 0; 
             
