@@ -1,0 +1,34 @@
+# Texas Instruments CCS / Eclipse Build Output
+**/isk/
+**/Debug/
+**/Release/
+**/src/sysbios/
+**/.launches/
+**/.settings/
+
+# Clangd and local development environment cache
+.clangd
+**/.clangd/
+**/.cache/
+
+# RTSC / XDCtools build output
+**/configPkg/
+
+# Binary & Object & Temp files
+*.obj
+*.oe674
+*.oer4ft
+*.oer4f
+*.xe674
+*.xer4ft
+*.xer4f
+*.bin
+*.map
+*.d
+*.opt
+*.xml
+*.errorlog
+*.tmp
+
+# Other temporary or local IDE files
+.xdchelp
