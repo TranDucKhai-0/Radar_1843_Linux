@@ -11,7 +11,7 @@ var makeAssembly = false;
 var Executable = xdc.module('xdc.bld.Executable');
 
 var exeOpts = new Executable.Attrs({
-        cfgScript: '/home/khai/workspace_ccstheia/out_of_box_1843_dss/mmw_dss.cfg',
+        cfgScript: '/home/charles-datle/UNI/Radar_1843_Linux/out_of_box_1843_dss/mmw_dss.cfg',
         profile: 'release',
         cfgHome: 'configPkg',
 });
@@ -41,7 +41,7 @@ else {
 
 var thisObj = {
     cfg:        '../mmw_dss.cfg',
-    outputPath: '/home/khai/workspace_ccstheia/out_of_box_1843_dss/isk/configPkg',
+    outputPath: '/home/charles-datle/UNI/Radar_1843_Linux/out_of_box_1843_dss/isk/configPkg',
     exeName:    'mmw_dss' + suffix,
     exeIntName: 'mmw_dss' + suffix.replace('.', '_'),
     targ:       targ,

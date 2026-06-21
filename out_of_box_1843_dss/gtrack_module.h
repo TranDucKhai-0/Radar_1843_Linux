@@ -1,6 +1,13 @@
 #ifndef GTRACK_MODULE_H
 #define GTRACK_MODULE_H
+#define GTRACK_3D
 
+/* Các hằng số  */
+#define GTRACK_TASK_PRIORITY        4
+#define MAX_DETECTED_POINTS         250
+#define MAX_TRACKING_TARGETS        20
+
+#include <ti/alg/gtrack/gtrack.h>
 #include <stdint.h>
 #include <ti/datapath/dpc/objectdetection/objdethwa/objectdetection.h>
 #include <ti/alg/gtrack/gtrack.h>
@@ -33,3 +40,6 @@ void GetGtrackTargetList(GTRACK_targetDesc *targetList, uint32_t *numTargets);
 extern Semaphore_Handle g_gtrackDoneSemHandle;
 
 #endif /* GTRACK_MODULE_H */
+
+
+

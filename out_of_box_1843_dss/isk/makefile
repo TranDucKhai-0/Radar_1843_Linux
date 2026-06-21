@@ -2,7 +2,7 @@
 # Automatically-generated file. Do not edit!
 ################################################################################
 
-CG_TOOL_ROOT := /home/khai/ti/ti-cgt-c6000_8.3.3
+CG_TOOL_ROOT := /home/charles-datle/ti/ti-cgt-c6000_8.3.3
 
 GEN_OPTS__FLAG := --cmd_file="configPkg/compiler.opt" 
 GEN_CMDS__FLAG := -l"configPkg/linker.cmd" 
@@ -11,6 +11,7 @@ ORDERED_OBJS += \
 "./antenna_geometry.oe674" \
 "./data_path.oe674" \
 "./dss_main.oe674" \
+"./gtrack_module.oe674" \
 "./objectdetection.oe674" \
 "../c674x_linker.cmd" \
 "../mmw_dss_linker.cmd" \
@@ -38,6 +39,8 @@ $(GEN_CMDS__FLAG) \
 -lrts6740_elf.lib \
 -llibaoaproc_hwa_xwr18xx.ae674 \
 -llibc.a \
+-l"/home/charles-datle/ti/mmwave_sdk_03_06_02_00-LTS/packages/ti/alg/gtrack/lib/libgtrack3D.ae674" \
+-l"/home/charles-datle/ti/mmwave_sdk_03_06_02_00-LTS/packages/ti/alg/gtrack/lib/libgtrack2D.ae674" \
 
 -include ../makefile.init
 
@@ -151,7 +154,7 @@ all: $(OBJS) $(CMD_SRCS) $(GEN_CMDS)
 # Tool invocations
 out_of_box_1843_dss_isk.xe674: $(OBJS) $(CMD_SRCS) $(GEN_CMDS)
 	@echo 'C6000 Linker - building target: "$@"'
-	"/home/khai/ti/ti-cgt-c6000_8.3.3/bin/cl6x" -mv6740 --abi=eabi -O3 --opt_for_speed=3 --define=SOC_XWR18XX --define=SUBSYS_DSS --define=MMWAVE_L3RAM_NUM_BANK=6 --define=MMWAVE_SHMEM_TCMA_NUM_BANK=0 --define=MMWAVE_SHMEM_TCMB_NUM_BANK=0 --define=MMWAVE_SHMEM_BANK_SIZE=0x20000 --define=DOWNLOAD_FROM_CCS --define=DebugP_ASSERT_ENABLED --define=_LITTLE_ENDIAN --define=OBJDET_NO_RANGE --define=APP_RESOURCE_FILE='<'ti/demo/xwr18xx/mmw/mmw_res.h'>' -g --gcc --diag_error=10015 --diag_warning=225 --diag_wrap=off --display_error_number --gen_func_subsections=on --obj_extension=.oe674 -z -m"out_of_box_1843_dss_isk.map" --heap_size=0x800 --stack_size=0x800 -i"/home/khai/ti/ti-cgt-c6000_8.3.3/lib" -i"/home/khai/workspace_ccstheia/out_of_box_1843_dss" -i"/home/khai/ti/mmwave_sdk_03_06_02_00-LTS/packages/ti/control/mmwave/lib" -i"/home/khai/ti/mmwave_sdk_03_06_02_00-LTS/packages/ti/control/mmwavelink/lib" -i"/home/khai/ti/mmwave_sdk_03_06_02_00-LTS/packages/ti/control/dpm/lib" -i"/home/khai/ti/mmwave_sdk_03_06_02_00-LTS/packages/ti/alg/mmwavelib/lib" -i"/home/khai/ti/mmwave_sdk_03_06_02_00-LTS/packages/ti/drivers/crc/lib" -i"/home/khai/ti/mmwave_sdk_03_06_02_00-LTS/packages/ti/drivers/soc/lib" -i"/home/khai/ti/mmwave_sdk_03_06_02_00-LTS/packages/ti/drivers/osal/lib" -i"/home/khai/ti/mmwave_sdk_03_06_02_00-LTS/packages/ti/drivers/mailbox/lib" -i"/home/khai/ti/mmwave_sdk_03_06_02_00-LTS/packages/ti/drivers/edma/lib" -i"/home/khai/ti/mmwave_sdk_03_06_02_00-LTS/packages/ti/drivers/adcbuf/lib" -i"/home/khai/ti/mmwave_sdk_03_06_02_00-LTS/packages/ti/drivers/cbuff/lib" -i"/home/khai/ti/mmwave_sdk_03_06_02_00-LTS/packages/ti/drivers/hwa/lib" -i"/home/khai/ti/mmwave_sdk_03_06_02_00-LTS/packages/ti/utils/hsiheader/lib" -i"/home/khai/ti/mmwave_sdk_03_06_02_00-LTS/packages/ti/utils/mathutils/lib" -i"/home/khai/ti/mmwave_sdk_03_06_02_00-LTS/packages/ti/datapath/dpc/dpu/dopplerproc/lib" -i"/home/khai/ti/mmwave_sdk_03_06_02_00-LTS/packages/ti/datapath/dpc/dpu/cfarcaproc/lib" -i"/home/khai/ti/mmwave_sdk_03_06_02_00-LTS/packages/ti/datapath/dpc/dpu/staticclutterproc/lib" -i"/home/khai/ti/mmwave_sdk_03_06_02_00-LTS/packages/ti/datapath/dpu/rangeproc/lib" -i"/home/khai/ti/mmwave_sdk_03_06_02_00-LTS/packages/ti/datapath/dpedma/lib" -i"/home/khai/ti/mathlib_c674x_3_1_2_1/packages/ti/mathlib/lib" -i"/home/khai/ti/mmwave_sdk_03_06_02_00-LTS/packages/ti/datapath/dpc/dpu/aoaproc/lib" -i"/home/khai/ti/ti-cgt-c6000_8.3.3/include" --reread_libs --disable_auto_rts --define=MMWAVE_L3RAM_NUM_BANK=6 --define=MMWAVE_SHMEM_TCMA_NUM_BANK=0 --define=MMWAVE_SHMEM_TCMB_NUM_BANK=0 --define=MMWAVE_SHMEM_BANK_SIZE=0x20000 --diag_error=10015 --diag_warning=225 --diag_wrap=off --display_error_number --warn_sections --xml_link_info="xwr18xx_mmw_demo_dss_linkInfo.xml" --ram_model --unused_section_elimination=on -o "out_of_box_1843_dss_isk.xe674" $(ORDERED_OBJS)
+	"/home/charles-datle/ti/ti-cgt-c6000_8.3.3/bin/cl6x" -mv6740 --abi=eabi -O3 --opt_for_speed=3 --define=SOC_XWR18XX --define=SUBSYS_DSS --define=MMWAVE_L3RAM_NUM_BANK=6 --define=MMWAVE_SHMEM_TCMA_NUM_BANK=0 --define=MMWAVE_SHMEM_TCMB_NUM_BANK=0 --define=MMWAVE_SHMEM_BANK_SIZE=0x20000 --define=DOWNLOAD_FROM_CCS --define=DebugP_ASSERT_ENABLED --define=_LITTLE_ENDIAN --define=OBJDET_NO_RANGE --define=APP_RESOURCE_FILE='<'ti/demo/xwr18xx/mmw/mmw_res.h'>' -g --gcc --diag_error=10015 --diag_warning=225 --diag_wrap=off --display_error_number --gen_func_subsections=on --obj_extension=.oe674 -z -m"out_of_box_1843_dss_isk.map" --heap_size=0x800 --stack_size=0x800 -i"/home/charles-datle/ti/ti-cgt-c6000_8.3.3/lib" -i"/home/charles-datle/UNI/Radar_1843_Linux/out_of_box_1843_dss" -i"/home/charles-datle/ti/mmwave_sdk_03_06_02_00-LTS/packages/ti/control/mmwave/lib" -i"/home/charles-datle/ti/mmwave_sdk_03_06_02_00-LTS/packages/ti/control/mmwavelink/lib" -i"/home/charles-datle/ti/mmwave_sdk_03_06_02_00-LTS/packages/ti/control/dpm/lib" -i"/home/charles-datle/ti/mmwave_sdk_03_06_02_00-LTS/packages/ti/alg/mmwavelib/lib" -i"/home/charles-datle/ti/mmwave_sdk_03_06_02_00-LTS/packages/ti/drivers/crc/lib" -i"/home/charles-datle/ti/mmwave_sdk_03_06_02_00-LTS/packages/ti/drivers/soc/lib" -i"/home/charles-datle/ti/mmwave_sdk_03_06_02_00-LTS/packages/ti/drivers/osal/lib" -i"/home/charles-datle/ti/mmwave_sdk_03_06_02_00-LTS/packages/ti/drivers/mailbox/lib" -i"/home/charles-datle/ti/mmwave_sdk_03_06_02_00-LTS/packages/ti/drivers/edma/lib" -i"/home/charles-datle/ti/mmwave_sdk_03_06_02_00-LTS/packages/ti/drivers/adcbuf/lib" -i"/home/charles-datle/ti/mmwave_sdk_03_06_02_00-LTS/packages/ti/drivers/cbuff/lib" -i"/home/charles-datle/ti/mmwave_sdk_03_06_02_00-LTS/packages/ti/drivers/hwa/lib" -i"/home/charles-datle/ti/mmwave_sdk_03_06_02_00-LTS/packages/ti/utils/hsiheader/lib" -i"/home/charles-datle/ti/mmwave_sdk_03_06_02_00-LTS/packages/ti/utils/mathutils/lib" -i"/home/charles-datle/ti/mmwave_sdk_03_06_02_00-LTS/packages/ti/datapath/dpc/dpu/dopplerproc/lib" -i"/home/charles-datle/ti/mmwave_sdk_03_06_02_00-LTS/packages/ti/datapath/dpc/dpu/cfarcaproc/lib" -i"/home/charles-datle/ti/mmwave_sdk_03_06_02_00-LTS/packages/ti/datapath/dpc/dpu/staticclutterproc/lib" -i"/home/charles-datle/ti/mmwave_sdk_03_06_02_00-LTS/packages/ti/datapath/dpu/rangeproc/lib" -i"/home/charles-datle/ti/mmwave_sdk_03_06_02_00-LTS/packages/ti/datapath/dpedma/lib" -i"/home/charles-datle/ti/mathlib_c674x_3_1_2_1/packages/ti/mathlib/lib" -i"/home/charles-datle/ti/mmwave_sdk_03_06_02_00-LTS/packages/ti/datapath/dpc/dpu/aoaproc/lib" -i"/home/charles-datle/ti/ti-cgt-c6000_8.3.3/include" -i"/home/charles-datle/ti/mmwave_sdk_03_06_02_00-LTS/packages/ti/alg/gtrack/lib" -i"/home/charles-datle/ti/mmwave_sdk_03_06_02_00-LTS/packages/ti/alg/gtrack/lib" --reread_libs --disable_auto_rts --define=MMWAVE_L3RAM_NUM_BANK=6 --define=MMWAVE_SHMEM_TCMA_NUM_BANK=0 --define=MMWAVE_SHMEM_TCMB_NUM_BANK=0 --define=MMWAVE_SHMEM_BANK_SIZE=0x20000 --diag_error=10015 --diag_warning=225 --diag_wrap=off --display_error_number --warn_sections --xml_link_info="xwr18xx_mmw_demo_dss_linkInfo.xml" --ram_model --unused_section_elimination=on -o "out_of_box_1843_dss_isk.xe674" $(ORDERED_OBJS)
 	@echo 'Finished building target: "$@"'
 	@echo ' '
 	@$(MAKE) --no-print-directory post-build
@@ -159,14 +162,14 @@ out_of_box_1843_dss_isk.xe674: $(OBJS) $(CMD_SRCS) $(GEN_CMDS)
 # Other Targets
 clean:
 	-$(RM) $(GEN_FILES__QUOTED)$(EXE_OUTPUTS__QUOTED)
-	-$(RM) "antenna_geometry.oe674" "data_path.oe674" "dss_main.oe674" "objectdetection.oe674" 
-	-$(RM) "antenna_geometry.d" "data_path.d" "dss_main.d" "objectdetection.d" 
+	-$(RM) "antenna_geometry.oe674" "data_path.oe674" "dss_main.oe674" "gtrack_module.oe674" "objectdetection.oe674" 
+	-$(RM) "antenna_geometry.d" "data_path.d" "dss_main.d" "gtrack_module.d" "objectdetection.d" 
 	-$(RMDIR) $(GEN_MISC_DIRS__QUOTED)
 	-@echo ' '
 
 post-build:
-	-rm -f /home/khai/workspace_ccstheia/out_of_box_1843_dss/isk/out_of_box_1843_dss_isk.bin
-	-/home/khai/ti/mmwave_sdk_03_06_02_00-LTS/packages/scripts/ImageCreator/out2rprc/out2rprc.exe out_of_box_1843_dss_isk.xe674 out_of_box_1843_dss_isk.bin
+	-rm -f /home/charles-datle/UNI/Radar_1843_Linux/out_of_box_1843_dss/isk/out_of_box_1843_dss_isk.bin
+	-mono /home/charles-datle/ti/mmwave_sdk_03_06_02_00-LTS/packages/scripts/ImageCreator/out2rprc/out2rprc.exe out_of_box_1843_dss_isk.xe674 out_of_box_1843_dss_isk.bin
 	-@echo ' '
 
 .PHONY: all clean dependents

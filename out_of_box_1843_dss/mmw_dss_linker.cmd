@@ -6,7 +6,7 @@
 /* Section Configuration                                                      */
 SECTIONS
 {
-    systemHeap : {} >> L2SRAM_UMAP0 | L2SRAM_UMAP1
+    systemHeap : {} >> L2SRAM_UMAP0 | L2SRAM_UMAP1 | L3SRAM
     .hwaBufs: load = HWA_RAM, type = NOINIT
     .l3ram: {} >> L3SRAM
     .dpc_l2Heap: { } >> L2SRAM_UMAP0 | L2SRAM_UMAP1

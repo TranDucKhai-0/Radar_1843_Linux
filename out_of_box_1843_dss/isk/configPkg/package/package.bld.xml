@@ -7,7 +7,7 @@
         <srcFile name="package/cfg/mmw_dss_pe674.c"/>
     </sources>
     <configscripts>
-        <srcFile name="/home/khai/workspace_ccstheia/out_of_box_1843_dss/mmw_dss.cfg"/>
+        <srcFile name="/home/charles-datle/UNI/Radar_1843_Linux/out_of_box_1843_dss/mmw_dss.cfg"/>
     </configscripts>
     <makefiles>
         <srcFile name="package.mak" src="package.bld"/>
@@ -25,7 +25,7 @@
             platform="ti.platforms.evmDA830"
             isa="674"
             suffix="e674"
-            rootDir="/home/khai/ti/ti-cgt-c6000_8.3.3"
+            rootDir="/home/charles-datle/ti/ti-cgt-c6000_8.3.3"
             os="undefined"
             rts="ti.targets.rts6000">
             <model endian="little"
@@ -44,7 +44,7 @@
         isPartial="false"
         xCfgScript="package/cfg/mmw_dss_pe674.cfg"
         xCfgPrefix="package/cfg/mmw_dss_pe674"
-        cfgScript="/home/khai/workspace_ccstheia/out_of_box_1843_dss/mmw_dss.cfg"
+        cfgScript="/home/charles-datle/UNI/Radar_1843_Linux/out_of_box_1843_dss/mmw_dss.cfg"
         cfgArgs="null"
         />
     </configurations>
@@ -56,7 +56,7 @@
         profile="release"
         xCfgScript="package/cfg/mmw_dss_pe674.cfg"
         xCfgPrefix="package/cfg/mmw_dss_pe674"
-        cfgScript="/home/khai/workspace_ccstheia/out_of_box_1843_dss/mmw_dss.cfg"
+        cfgScript="/home/charles-datle/UNI/Radar_1843_Linux/out_of_box_1843_dss/mmw_dss.cfg"
         cfgArgs="null"
         />
     </executables>

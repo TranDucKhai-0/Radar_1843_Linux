@@ -1,6 +1,6 @@
 #
 # This file was generated based on the configuration script:
-#     /home/khai/workspace_ccstheia/out_of_box_1843_dss/mmw_dss.cfg
+#     /home/charles-datle/UNI/Radar_1843_Linux/out_of_box_1843_dss/mmw_dss.cfg
 #
 # This makefile may be included in other makefiles that need to build
 # the libraries containing the compiled source files generated as
@@ -14,7 +14,7 @@
 #
 # The absolute path to the generated source directory (at the time the
 # sources were generated) is:
-#    /home/khai/workspace_ccstheia/out_of_box_1843_dss/src
+#    /home/charles-datle/UNI/Radar_1843_Linux/out_of_box_1843_dss/src
 #
 GEN_SRC_DIR ?= ../src
 
