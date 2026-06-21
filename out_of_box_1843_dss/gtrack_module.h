@@ -36,6 +36,9 @@ void SendPointCloudToGtrack(DPIF_PointCloudCartesian *pPointCloud, uint32_t numP
 /* Lấy danh sách Target đã được track xong */
 void GetGtrackTargetList(GTRACK_targetDesc *targetList, uint32_t *numTargets);
 
+/* Lấy con trỏ trực tiếp đến danh sách Target đã được track xong */
+GTRACK_targetDesc* GetGtrackTargetListPointer(uint32_t *numTargets);
+
 /* Semaphore để DSS Main chờ GTRACK xử lý xong */
 extern Semaphore_Handle g_gtrackDoneSemHandle;
 

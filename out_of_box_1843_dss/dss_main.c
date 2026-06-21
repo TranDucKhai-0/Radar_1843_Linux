@@ -469,16 +469,15 @@ static int32_t MmwDemo_copyResultToHSRAM
     result->objOutSideInfo = NULL;
     
     /* === CHÈN DỮ LIỆU TARGET LIST (GTRACK) VÀO PAYLOAD GỬI MSS === */
-    GTRACK_targetDesc targetDescs[MAX_TRACKING_TARGETS];
     uint32_t numTargets = 0;
-    GetGtrackTargetList(targetDescs, &numTargets);
+    GTRACK_targetDesc *pTargetList = GetGtrackTargetListPointer(&numTargets);
 
     if(numTargets > 0)
     {
         itemPayloadLen = sizeof(GTRACK_targetDesc) * numTargets;
         if((totalHsramSize- itemPayloadLen) > 0)
         {
-            memcpy(ptrCurrBuffer, (void *)targetDescs, itemPayloadLen);
+            memcpy(ptrCurrBuffer, (void *)pTargetList, itemPayloadLen);
             
             /* "Mượn" con trỏ objOut và thuộc tính numObjOut để gửi Target.
              * Code bên MSS sẽ cần ép kiểu (GTRACK_targetDesc*) khi lấy ra */
