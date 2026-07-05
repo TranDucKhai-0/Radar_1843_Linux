@@ -619,6 +619,7 @@
 #include <ti/drivers/uart/UART.h>
 #include <ti/utils/cli/cli.h>
 #include <ti/utils/mathutils/mathutils.h>
+#include "gtrack_module.h"
 
 /* Demo Include Files */
 #include <ti/demo/xwr18xx/mmw/include/mmw_config.h>
@@ -642,6 +643,12 @@
 #ifndef MMWDEMO_OUTPUT_MSG_TRACKER_DATA
 #define MMWDEMO_OUTPUT_MSG_TRACKER_DATA 10
 #endif
+
+/* Khai báo Handle cho Semaphore */
+Semaphore_Handle uartTxSemHandle;
+
+/* Biến toàn cục lưu trữ dữ liệu GTrack để đẩy ra ngoài */
+GTRACK_targetDesc gGlobalTargetDesc;
 
 /**
  * @brief Task Priority settings:
@@ -2687,8 +2694,27 @@ static void MmwDemo_handleObjectDetResult
     /* Translate the address: */
     dpcResults = (DPC_ObjectDetection_ExecuteResult *)SOC_translateAddress((uint32_t)ptrResult->ptrBuffer[0],
                                              SOC_TranslateAddr_Dir_FROM_OTHER_CPU,
-                                             &retVal);
+                                             &retVal);                                    
     DebugP_assert ((uint32_t)dpcResults != SOC_TRANSLATEADDR_INVALID);
+    /* =====================================================================
+     * LẤY DỮ LIỆU GTRACK VÀ ĐÁNH THỨC TASK UART
+     * ===================================================================== */
+    if (dpcResults->numObjOut > 0)
+    {
+        /* Lấy con trỏ chứa danh sách các đối tượng GTrack từ dpcResults */
+        GTRACK_targetDesc *targetList = (GTRACK_targetDesc *) SOC_translateAddress((uint32_t)dpcResults->objOut,
+                                                         SOC_TranslateAddr_Dir_FROM_OTHER_CPU,
+                                                         &retVal);
+                                                         
+        if ((uint32_t)targetList != SOC_TRANSLATEADDR_INVALID)
+        {
+            /* Copy dữ liệu GTrack vào biến toàn cục. */
+            memcpy(&gGlobalTargetDesc, &targetList[0], sizeof(GTRACK_targetDesc));
+            
+            /* Bắn tín hiệu đánh thức task MmwDemo_uartTxTask */
+            Semaphore_post(uartTxSemHandle);
+        }
+    }
 
     /* Validate timing Info buffer */
     DebugP_assert (ptrResult->size[1] == sizeof(MmwDemo_output_message_stats));
@@ -3709,6 +3735,25 @@ static int32_t MmwDemo_calibRestore(MmwDemo_calibData  *ptrCalibData)
  *  @retval
  *      Not Applicable.
  */
+
+void MmwDemo_uartTxTask(UArg arg0, UArg arg1)
+{
+    while(1)
+    {
+        /* Task chờ ở đây cho đến khi có tín hiệu (post) từ Mailbox */
+        Semaphore_pend(uartTxSemHandle, BIOS_WAIT_FOREVER);
+
+        /* Gửi cấu trúc GTRACK_targetDesc qua UART. 
+           Lưu ý kiểm tra tên handle logging UART (thường là gMmwMssMCB.loggingUartHandle) */
+        if (gMmwMssMCB.loggingUartHandle != NULL)
+        {
+            UART_write(gMmwMssMCB.loggingUartHandle, 
+                       (uint8_t*)&gGlobalTargetDesc, 
+                       sizeof(GTRACK_targetDesc));
+        }
+    }
+}
+
 static void MmwDemo_initTask(UArg arg0, UArg arg1)
 {
     int32_t             errCode;
@@ -3928,6 +3973,17 @@ static void MmwDemo_initTask(UArg arg0, UArg arg1)
      * Initialize the CLI Module:
      *****************************************************************************/
     MmwDemo_CLIInit(MMWDEMO_CLI_TASK_PRIORITY);
+
+    /* 1. Khởi tạo Binary Semaphore cho task UART Tx */
+    Semaphore_Params_init(&semParams);
+    semParams.mode = Semaphore_Mode_BINARY;
+    uartTxSemHandle = Semaphore_create(0, &semParams, NULL);
+
+    /* 2. Khởi tạo Task gửi UART với mức ưu tiên 3 */
+    Task_Params_init(&taskParams);
+    taskParams.priority = 3;           
+    taskParams.stackSize = 3 * 1024;   
+    Task_create(MmwDemo_uartTxTask, &taskParams, NULL);
 
     return;
 }
