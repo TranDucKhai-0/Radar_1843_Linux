@@ -2891,9 +2891,10 @@ static void MmwDemo_handleObjectDetResult
     }
 
     /* Transmit processing results for the frame */
-    MmwDemo_transmitProcessedOutput(gMmwMssMCB.loggingUartHandle,  
+    /* Vô hiệu hóa hàm gửi mặc định của TI để không xung đột với gói tin 260-byte tùy biến */
+    /* MmwDemo_transmitProcessedOutput(gMmwMssMCB.loggingUartHandle,  
                                     dpcResults,
-                                    &currSubFrameStats->outputStats);
+                                    &currSubFrameStats->outputStats); */
 
     /* Wait until s/w session is complete. We expect the LVDS transmission of
      * s/w session to be completed by now because the UART transmission above is slower.
