@@ -620,7 +620,6 @@
 #include <ti/drivers/uart/UART.h>
 #include <ti/utils/cli/cli.h>
 #include <ti/utils/mathutils/mathutils.h>
-#include "gtrack_module.h"
 
 /* Demo Include Files */
 #include <ti/demo/xwr18xx/mmw/include/mmw_config.h>
@@ -652,9 +651,7 @@
 /* Khai báo Handle cho Semaphore */
 Semaphore_Handle uartTxSemHandle;
 
-/* Biến toàn cục lưu trữ dữ liệu GTrack để đẩy ra ngoài */
-#define FIXED_PACKET_SIZE 260
-#define MAX_CUSTOM_TARGETS 7
+
 
 /* Bộ đệm cố định 260 Bytes để gửi ra ngoài */
 uint8_t gUartTxBuffer[FIXED_PACKET_SIZE];
