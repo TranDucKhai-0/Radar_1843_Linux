@@ -2717,59 +2717,36 @@ static void MmwDemo_handleObjectDetResult
      * LẤY DỮ LIỆU GTRACK VÀ ĐÁNH THỨC TASK TRUYỀN DỮ LIỆU
      * ===================================================================== */
     {
-        uint32_t numTargetsToSend = 0;
-        GTRACK_targetDesc *targetList = NULL;
+        uint8_t *sharedPacket = NULL;
 
-        if (dpcResults->numObjOut > 0)
+        if (dpcResults->numObjOut > 0 && dpcResults->objOut != NULL)
         {
-            targetList = (GTRACK_targetDesc *) SOC_translateAddress((uint32_t)dpcResults->objOut,
+            sharedPacket = (uint8_t *) SOC_translateAddress((uint32_t)dpcResults->objOut,
                                                              SOC_TranslateAddr_Dir_FROM_OTHER_CPU,
                                                              &retVal);
-            if ((uint32_t)targetList != SOC_TRANSLATEADDR_INVALID)
-            {
-                numTargetsToSend = (dpcResults->numObjOut > MAX_CUSTOM_TARGETS) ? MAX_CUSTOM_TARGETS : dpcResults->numObjOut;
-            }
         }
 
         /* Ghi dữ liệu trực tiếp vào buffer đang được chỉ định bởi g_pCommWriteBuffer */
         uint8_t *writeBuf = g_pCommWriteBuffer;
 
-        /* Reset mảng buffer */
-        memset(writeBuf, 0xFF, FIXED_PACKET_SIZE);
-
-        /* Gán Header */
-        outputDataHeader_t *header = (outputDataHeader_t *)writeBuf;
-        header->magicWord[0] = 0x01;
-        header->magicWord[1] = 0x02;
-        header->magicWord[2] = 0x03;
-        header->magicWord[3] = 0x04;
-        
-        header->numTargets = numTargetsToSend;
-
-        /* Con trỏ trỏ tới vùng Payload ngay sau Header */
-        outputTargetData_t *payload = (outputTargetData_t *)(writeBuf + sizeof(outputDataHeader_t));
-
-        /* Trích xuất dữ liệu GTrack từ DSP vào struct outputTargetData_t */
-        if (numTargetsToSend > 0 && targetList != NULL)
+        if (sharedPacket != NULL)
         {
-            uint32_t i;
-            for (i = 0; i < numTargetsToSend; i++) {
-                payload[i].tid  = targetList[i].uid;
-                payload[i].posX = targetList[i].S[0];
-                payload[i].posY = targetList[i].S[1];
-                payload[i].posZ = targetList[i].S[2];
-                payload[i].velX = targetList[i].S[3];
-                payload[i].velY = targetList[i].S[4];
-                payload[i].velZ = targetList[i].S[5];
-                payload[i].dimX = targetList[i].dim[0];
-                payload[i].dimY = targetList[i].dim[1];
-            }
+            /* Copy trực tiếp gói dữ liệu có kích thước động đã được DSP định dạng sẵn */
+            memcpy(writeBuf, sharedPacket, FIXED_PACKET_SIZE);
         }
-
-        /* Xử lý các Target còn trống: cấp phát bằng giá trị 0x0F */
-        if (numTargetsToSend < MAX_CUSTOM_TARGETS) {
-            uint32_t emptyBytes = (MAX_CUSTOM_TARGETS - numTargetsToSend) * sizeof(outputTargetData_t);
-            memset(&payload[numTargetsToSend], 0x0F, emptyBytes);
+        else
+        {
+            /* Nếu không có dữ liệu từ DSP, tạo gói tin trống */
+            memset(writeBuf, 0xFF, FIXED_PACKET_SIZE);
+            outputDataHeader_t *header = (outputDataHeader_t *)writeBuf;
+            header->magicWord[0] = 0x01;
+            header->magicWord[1] = 0x02;
+            header->magicWord[2] = 0x03;
+            header->magicWord[3] = 0x04;
+            header->numTargets = 0;
+            
+            outputTargetData_t *payload = (outputTargetData_t *)(writeBuf + sizeof(outputDataHeader_t));
+            memset(payload, 0x0F, MAX_CUSTOM_TARGETS * sizeof(outputTargetData_t));
         }
 
         /* Tráo đổi con trỏ an toàn bằng cách khóa ngắt */

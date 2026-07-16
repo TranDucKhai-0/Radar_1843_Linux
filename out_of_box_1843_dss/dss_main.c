@@ -79,6 +79,7 @@
 
 /* Module Gtrack tự định nghĩa */
 #include "gtrack_module.h"
+#include "../component/include/out_type_data.h"
 
 /* Demo Include Files */
 #include <ti/demo/utils/mmwdemo_rfparser.h>
@@ -468,34 +469,97 @@ static int32_t MmwDemo_copyResultToHSRAM
     /* Xóa hoàn toàn ObjOut và SideInfo (cắt bỏ dữ liệu OOB Point Cloud) */
     result->objOutSideInfo = NULL;
     
-    /* === CHÈN DỮ LIỆU TARGET LIST (GTRACK) VÀO PAYLOAD GỬI MSS === */
+    /* === CHÈN DỮ LIỆU CUSTOM TARGET (outputTargetData_t) VÀO HSRAM === */
     uint32_t numTargets = 0;
     GTRACK_targetDesc *pTargetList = GetGtrackTargetListPointer(&numTargets);
+    uint32_t numTargetsToSend = (numTargets > MAX_CUSTOM_TARGETS) ? MAX_CUSTOM_TARGETS : numTargets;
 
-    if(numTargets > 0)
+    if (totalHsramSize >= FIXED_PACKET_SIZE)
     {
-        itemPayloadLen = sizeof(GTRACK_targetDesc) * numTargets;
-        if((totalHsramSize- itemPayloadLen) > 0)
+        uint8_t *packetStart = ptrCurrBuffer;
+        
+        // Ghi Header
+        outputDataHeader_t *header = (outputDataHeader_t *)packetStart;
+        header->magicWord[0] = 0x01;
+        header->magicWord[1] = 0x02;
+        header->magicWord[2] = 0x03;
+        header->magicWord[3] = 0x04;
+        header->numTargets = numTargetsToSend;
+
+        outputTargetData_t *payloads = (outputTargetData_t *)(packetStart + sizeof(outputDataHeader_t));
+
+        if (numTargets > 0)
         {
-            memcpy(ptrCurrBuffer, (void *)pTargetList, itemPayloadLen);
+            // 1. Tính bình phương khoảng cách cho từng target
+            typedef struct {
+                uint32_t index;
+                float distSq;
+            } TargetDist_t;
+            TargetDist_t targetDists[MAX_TRACKING_TARGETS];
             
-            /* "Mượn" con trỏ objOut và thuộc tính numObjOut để gửi Target.
-             * Code bên MSS sẽ cần ép kiểu (GTRACK_targetDesc*) khi lấy ra */
-            ptrHsramBuffer->result.objOut = (DPIF_PointCloudCartesian *)ptrCurrBuffer;
-            ptrHsramBuffer->result.numObjOut = numTargets;
-            
-            ptrCurrBuffer+= itemPayloadLen;
-            totalHsramSize -=itemPayloadLen;
+            uint32_t idx;
+            for (idx = 0; idx < numTargets; idx++)
+            {
+                float x = pTargetList[idx].S[0];
+                float y = pTargetList[idx].S[1];
+                float z = pTargetList[idx].S[2];
+                targetDists[idx].index = idx;
+                targetDists[idx].distSq = x*x + y*y + z*z;
+            }
+
+            // 2. Sắp xếp Selection Sort tăng dần (gần nhất lên đầu)
+            uint32_t i, j;
+            for (i = 0; i < numTargets - 1; i++)
+            {
+                uint32_t minIdx = i;
+                for (j = i + 1; j < numTargets; j++)
+                {
+                    if (targetDists[j].distSq < targetDists[minIdx].distSq)
+                    {
+                        minIdx = j;
+                    }
+                }
+                if (minIdx != i)
+                {
+                    TargetDist_t temp = targetDists[i];
+                    targetDists[i] = targetDists[minIdx];
+                    targetDists[minIdx] = temp;
+                }
+            }
+
+            // 3. Đóng gói các đối tượng gần nhất
+            for (i = 0; i < numTargetsToSend; i++)
+            {
+                uint32_t sortedIdx = targetDists[i].index;
+                payloads[i].tid  = pTargetList[sortedIdx].uid;
+                payloads[i].posX = pTargetList[sortedIdx].S[0];
+                payloads[i].posY = pTargetList[sortedIdx].S[1];
+                payloads[i].posZ = pTargetList[sortedIdx].S[2];
+                payloads[i].velX = pTargetList[sortedIdx].S[3];
+                payloads[i].velY = pTargetList[sortedIdx].S[4];
+                payloads[i].velZ = pTargetList[sortedIdx].S[5];
+                payloads[i].dimX = pTargetList[sortedIdx].dim[0];
+                payloads[i].dimY = pTargetList[sortedIdx].dim[1];
+            }
         }
-        else
+
+        // Lấp đầy các Target trống bằng 0x0F
+        if (numTargetsToSend < MAX_CUSTOM_TARGETS)
         {
-            return -1;
+            uint32_t emptyBytes = (MAX_CUSTOM_TARGETS - numTargetsToSend) * sizeof(outputTargetData_t);
+            memset(&payloads[numTargetsToSend], 0x0F, emptyBytes);
         }
+
+        /* "Mượn" con trỏ objOut để trỏ tới gói dữ liệu đã định dạng */
+        ptrHsramBuffer->result.objOut = (DPIF_PointCloudCartesian *)packetStart;
+        ptrHsramBuffer->result.numObjOut = FIXED_PACKET_SIZE; 
+
+        ptrCurrBuffer += FIXED_PACKET_SIZE;
+        totalHsramSize -= FIXED_PACKET_SIZE;
     }
     else
     {
-        ptrHsramBuffer->result.objOut = NULL;
-        ptrHsramBuffer->result.numObjOut = 0;
+        return -1;
     }
 
     /* Save DPC_ObjectDetection_Stats in HSRAM */
