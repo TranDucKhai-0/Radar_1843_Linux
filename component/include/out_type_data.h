@@ -8,7 +8,7 @@
 typedef struct {
     uint8_t  magicWord[4];  // 4 Bytes: Chuỗi báo hiệu đồng bộ (0x01, 0x02, 0x03, 0x04)
     uint32_t numTargets;    // 4 Bytes: Số lượng đối tượng hợp lệ trong payload (0 - 7)
-} Custom_Output_Header;
+} outputDataHeader_t;
 
 typedef struct {
     uint32_t tid;           // 4 Bytes: Target ID
@@ -20,6 +20,6 @@ typedef struct {
     float    velZ;          // 4 Bytes: Vận tốc Z (m/s)
     float    dimX;          // 4 Bytes: Kích thước - Độ rộng (m)
     float    dimY;          // 4 Bytes: Kích thước - Độ cao (m)
-} Custom_Target_Data;
+} outputTargetData_t;
 
 #endif

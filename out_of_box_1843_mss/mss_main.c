@@ -643,18 +643,20 @@
 #include <ti/utils/rtrim/rtrimutils.h>
 #endif
 
+#define GTRACK_3D
 #include <ti/alg/gtrack/gtrack.h>
 #ifndef MMWDEMO_OUTPUT_MSG_TRACKER_DATA
 #define MMWDEMO_OUTPUT_MSG_TRACKER_DATA 10
 #endif
 
 /* Khai báo Handle cho Semaphore */
-Semaphore_Handle uartTxSemHandle;
+Semaphore_Handle g_uartTxSemHandle;
 
 
 
 /* Bộ đệm cố định 260 Bytes để gửi ra ngoài */
-uint8_t gUartTxBuffer[FIXED_PACKET_SIZE];
+#pragma DATA_ALIGN(g_uartTxBuffer, 4);
+uint8_t g_uartTxBuffer[FIXED_PACKET_SIZE];
 
 /**
  * @brief Task Priority settings:
@@ -2715,10 +2717,10 @@ static void MmwDemo_handleObjectDetResult
         if ((uint32_t)targetList != SOC_TRANSLATEADDR_INVALID)
         {
             /* Reset mảng buffer */
-            memset(gUartTxBuffer, 0xFF, FIXED_PACKET_SIZE);
+            memset(g_uartTxBuffer, 0xFF, FIXED_PACKET_SIZE);
 
             /* Gán Header */
-            Custom_Output_Header *header = (Custom_Output_Header *)gUartTxBuffer;
+            outputDataHeader_t *header = (outputDataHeader_t *)g_uartTxBuffer;
             header->magicWord[0] = 0x01;
             header->magicWord[1] = 0x02;
             header->magicWord[2] = 0x03;
@@ -2729,9 +2731,9 @@ static void MmwDemo_handleObjectDetResult
             header->numTargets = numTargetsToSend;
 
             /* Con trỏ trỏ tới vùng Payload ngay sau Header */
-            Custom_Target_Data *payload = (Custom_Target_Data *)(gUartTxBuffer + sizeof(Custom_Output_Header));
+            outputTargetData_t *payload = (outputTargetData_t *)(g_uartTxBuffer + sizeof(outputDataHeader_t));
 
-            /* Trích xuất dữ liệu GTrack từ DSP vào struct Custom_Target_Data */
+            /* Trích xuất dữ liệu GTrack từ DSP vào struct outputTargetData_t */
             uint32_t i;
             for (i = 0; i < numTargetsToSend; i++) {
                 payload[i].tid  = targetList[i].uid;
@@ -2747,12 +2749,12 @@ static void MmwDemo_handleObjectDetResult
 
             /* Xử lý các Target còn trống: cấp phát bằng giá trị 0x0F */
             if (numTargetsToSend < MAX_CUSTOM_TARGETS) {
-                uint32_t emptyBytes = (MAX_CUSTOM_TARGETS - numTargetsToSend) * sizeof(Custom_Target_Data);
+                uint32_t emptyBytes = (MAX_CUSTOM_TARGETS - numTargetsToSend) * sizeof(outputTargetData_t);
                 memset(&payload[numTargetsToSend], 0x0F, emptyBytes);
             }
 
             /* Bắn tín hiệu đánh thức task MmwDemo_uartTxTask */
-            Semaphore_post(uartTxSemHandle);
+            Semaphore_post(g_uartTxSemHandle);
         }
     }
     /* Validate timing Info buffer */
@@ -3779,12 +3781,12 @@ void MmwDemo_uartTxTask(UArg arg0, UArg arg1)
 {
     while(1)
     {
-        Semaphore_pend(uartTxSemHandle, BIOS_WAIT_FOREVER);
+        Semaphore_pend(g_uartTxSemHandle, BIOS_WAIT_FOREVER);
 
         if (gMmwMssMCB.loggingUartHandle != NULL)
         {
-            /* Chỉ truyền đúng 260 Bytes cố định của mảng gUartTxBuffer */
-            UART_write(gMmwMssMCB.loggingUartHandle, gUartTxBuffer, FIXED_PACKET_SIZE);
+            /* Chỉ truyền đúng 260 Bytes cố định của mảng g_uartTxBuffer */
+            UART_write(gMmwMssMCB.loggingUartHandle, g_uartTxBuffer, FIXED_PACKET_SIZE);
         }
     }
 }
@@ -4012,7 +4014,7 @@ static void MmwDemo_initTask(UArg arg0, UArg arg1)
     /*  Khởi tạo Binary Semaphore cho task UART Tx */
     Semaphore_Params_init(&semParams);
     semParams.mode = Semaphore_Mode_BINARY;
-    uartTxSemHandle = Semaphore_create(0, &semParams, NULL);
+    g_uartTxSemHandle = Semaphore_create(0, &semParams, NULL);
 
     /*  Khởi tạo Task gửi UART với mức ưu tiên 3 */
     Task_Params_init(&taskParams);
