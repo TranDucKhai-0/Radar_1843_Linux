@@ -94,7 +94,7 @@
 #define MMWDEMO_DPC_OBJDET_DPM_TASK_PRIORITY      5
 
 /*! L3 RAM buffer for object detection DPC */
-uint8_t gMmwL3[SOC_L3RAM_SIZE - 65536];
+uint8_t gMmwL3[SOC_L3RAM_SIZE - 196608];
 
 #ifndef SOC_XWR68XX
 /* EDMA 4K silicon bug related : Align heap to 4K address boundary so that

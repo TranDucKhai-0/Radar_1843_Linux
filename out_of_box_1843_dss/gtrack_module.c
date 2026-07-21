@@ -207,11 +207,12 @@ void SendPointCloudToGtrack(DPIF_PointCloudCartesian *pPointCloud, uint32_t numP
 
 /* CÁC HÀM PORTING BẮT BUỘC ĐỂ THƯ VIỆN GTRACK HOẠT ĐỘNG                  */
 #include <stdlib.h> 
+#include <ti/drivers/osal/MemoryP.h>
 
 /* Hàm cấp phát bộ nhớ cho GTRACK khi khởi tạo */
 void *gtrack_alloc(uint32_t numElements, uint32_t sizeInBytes)
 {
-    return malloc(numElements * sizeInBytes);
+    return MemoryP_ctrlAlloc(numElements * sizeInBytes, 0);
 }
 
 /* Hàm giải phóng bộ nhớ (thường dùng khi xóa GTRACK) */
@@ -219,7 +220,7 @@ void gtrack_free(void *pFree, uint32_t sizeInBytes)
 {
     if (pFree != NULL)
     {
-        free(pFree);
+        MemoryP_ctrlFree(pFree, sizeInBytes);
     }
 }
 
