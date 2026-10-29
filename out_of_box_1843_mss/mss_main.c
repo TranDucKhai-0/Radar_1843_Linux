@@ -656,7 +656,7 @@ Semaphore_Handle g_commTxSemHandle;
 
 /* Hệ thống Triple Buffering để giao tiếp bên ngoài (UART/CAN) */
 #pragma DATA_ALIGN(g_commTxBuffers, 4);
-uint8_t g_commTxBuffers[3][FIXED_PACKET_SIZE];
+uint8_t g_commTxBuffers[3][MAX_PACKET_SIZE];
 
 /* Các con trỏ trạng thái */
 uint8_t * volatile g_pCommWriteBuffer = &g_commTxBuffers[0][0];
@@ -2729,24 +2729,20 @@ static void MmwDemo_handleObjectDetResult
         /* Ghi dữ liệu trực tiếp vào buffer đang được chỉ định bởi g_pCommWriteBuffer */
         uint8_t *writeBuf = g_pCommWriteBuffer;
 
-        if (sharedPacket != NULL)
+        if (sharedPacket != NULL &&
+            dpcResults->numObjOut >= sizeof(outputDataHeader_t) &&
+            dpcResults->numObjOut <= MAX_PACKET_SIZE)
         {
-            /* Copy trực tiếp gói dữ liệu có kích thước động đã được DSP định dạng sẵn */
-            memcpy(writeBuf, sharedPacket, FIXED_PACKET_SIZE);
+            memcpy(writeBuf, sharedPacket, dpcResults->numObjOut);
+            DebugP_assert(((outputDataHeader_t *)writeBuf)->packetLength == dpcResults->numObjOut);
         }
         else
         {
-            /* Nếu không có dữ liệu từ DSP, tạo gói tin trống */
-            memset(writeBuf, 0xFF, FIXED_PACKET_SIZE);
             outputDataHeader_t *header = (outputDataHeader_t *)writeBuf;
-            header->magicWord[0] = 0x01;
-            header->magicWord[1] = 0x02;
-            header->magicWord[2] = 0x03;
-            header->magicWord[3] = 0x04;
-            header->numTargets = 0;
-            
-            outputTargetData_t *payload = (outputTargetData_t *)(writeBuf + sizeof(outputDataHeader_t));
-            memset(payload, 0x0F, MAX_CUSTOM_TARGETS * sizeof(outputTargetData_t));
+            memset(header, 0, sizeof(*header));
+            memcpy(header->magicWord, RADAR_PACKET_MAGIC, sizeof(header->magicWord));
+            header->version = RADAR_PACKET_VERSION;
+            header->packetLength = sizeof(*header);
         }
 
         /* Tráo đổi con trỏ an toàn bằng cách khóa ngắt */
@@ -3840,7 +3836,7 @@ void MmwDemo_commTxTask(UArg arg0, UArg arg1)
         while (g_pCommSendBuffer != NULL)
         {
             /* Gọi hàm gửi chung */
-            Comm_send(g_pCommSendBuffer, FIXED_PACKET_SIZE);
+            Comm_send(g_pCommSendBuffer, ((outputDataHeader_t *)g_pCommSendBuffer)->packetLength);
 
             /* Truyền xong, cập nhật trạng thái con trỏ an toàn */
             uint32_t key = Hwi_disable();

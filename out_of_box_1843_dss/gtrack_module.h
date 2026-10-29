@@ -12,6 +12,7 @@
 #include <ti/datapath/dpc/objectdetection/objdethwa/objectdetection.h>
 #include <ti/alg/gtrack/gtrack.h>
 #include <ti/sysbios/knl/Semaphore.h>
+#include "../component/include/out_type_data.h"
 
 /* Khởi tạo module GTRACK và các Semaphore cần thiết */
 void InitGtrackModule(void);
@@ -31,13 +32,14 @@ void CreateGtrackTask(void);
  * Hàm dùng để bắn dữ liệu từ luồng DPC của OOB sang GTRACK. 
  * Hàm này sẽ copy dữ liệu và post Semaphore.
  */
-void SendPointCloudToGtrack(DPIF_PointCloudCartesian *pPointCloud, uint32_t numPoints);
+void SendPointCloudToGtrack(DPIF_PointCloudCartesian *pPointCloud, DPIF_PointCloudSideInfo *sideInfo, uint32_t numPoints);
 
 /* Lấy danh sách Target đã được track xong */
 void GetGtrackTargetList(GTRACK_targetDesc *targetList, uint32_t *numTargets);
 
 /* Lấy con trỏ trực tiếp đến danh sách Target đã được track xong */
 GTRACK_targetDesc* GetGtrackTargetListPointer(uint32_t *numTargets);
+void GetGtrackDiagnostics(outputGtrackDiagnostics_t *diagnostics);
 
 /* Semaphore để DSS Main chờ GTRACK xử lý xong */
 extern Semaphore_Handle g_gtrackDoneSemHandle;
